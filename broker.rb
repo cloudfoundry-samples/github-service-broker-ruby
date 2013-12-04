@@ -9,7 +9,8 @@ class ServiceBroker < Sinatra::Base
       "services" => [{
         "id" => "github-repo",
         "name"=> " GitHub repository service",
-        "description"=> "An instance of this service provides a repository which an app write to and read from",
+        "description"=> "An instance of this service provides a repository which an app can write to and read from.",
+        "bindable" => true,
         "plans"=> [{
           "id"=> "public-repo",
           "name"=> "free",
