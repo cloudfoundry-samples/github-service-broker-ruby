@@ -7,17 +7,13 @@ class ServiceBroker < Sinatra::Base
 
     description = {
       "services" => [{
-        "id" => "echo-service",
-        "name"=> "Echo Service",
-        "description"=> "A service that echoes back the body of each web request it receives",
+        "id" => "github-repo",
+        "name"=> " GitHub repository service",
+        "description"=> "An instance of this service provides a repository which an app write to and read from",
         "plans"=> [{
-          "id"=> "free-plan",
+          "id"=> "public-repo",
           "name"=> "free",
-          "description"=> "Echoing does not cost money."
-        },{
-          "id"=> "expensive-plan",
-          "name"=> "expensive",
-          "description"=> "Echoing costs lots of money."
+          "description"=> "All repositories are public."
         }]
       }]
     }
