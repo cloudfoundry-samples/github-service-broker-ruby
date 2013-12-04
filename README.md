@@ -89,4 +89,3 @@ Getting services... OK
 service                     version   provider   plans   description
 GitHub repository service   n/a       n/a        free    An instance of this service provides a repository which an app write to and read from
 ```
-
