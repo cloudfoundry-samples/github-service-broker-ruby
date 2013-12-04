@@ -89,3 +89,20 @@ Getting services... OK
 service                     version   provider   plans   description
 GitHub repository service   n/a       n/a        free    An instance of this service provides a repository which an app write to and read from
 ```
+
+### Making the Service Plans Public
+
+Please refer to the "Making a Plan Public" section of [Writing a Cloud Foundry Service Broker](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html) on instructions for how to make plans public.
+
+
+
+## Misc
+The Cloud Foundry commands used in this document were verified using the following CLI tool versions:
+
+```
+cf 5.4.3
+```
+
+```
+gcf version 6.0.0.rc1-d04428f293
+```
