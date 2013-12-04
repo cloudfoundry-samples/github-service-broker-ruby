@@ -1,5 +1,5 @@
-github-service-ruby
-===================
+github-service-broker-ruby
+==========================
 
 A Service Broker is required to integrate any service as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed) on Cloud Foundry.
 
