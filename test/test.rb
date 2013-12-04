@@ -28,10 +28,11 @@ describe "/v2/catalog" do
     assert services.length > 0
 
     services.each do |service|
-      service.keys.length.must_equal 4
+      service.keys.length.must_equal 5
       assert service.keys.include? "id"
       assert service.keys.include? "name"
       assert service.keys.include? "description"
+      assert service.keys.include? "bindable"
       assert service.keys.include? "plans"
 
       plans = service["plans"]
