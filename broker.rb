@@ -1,9 +1,11 @@
 require 'sinatra'
 require 'json'
+require 'yaml'
 
 class ServiceBroker < Sinatra::Base
+
   use Rack::Auth::Basic do |username, password|
-    username == 'admin' and password == 'password'
+    username == self.app_settings["basic_auth"]["username"] and password == self.app_settings["basic_auth"]["password"]
   end
 
   get "/v2/catalog" do
@@ -24,5 +26,9 @@ class ServiceBroker < Sinatra::Base
     }
 
     description.to_json
+  end
+
+  def self.app_settings
+    YAML.load_file('settings.yml')
   end
 end

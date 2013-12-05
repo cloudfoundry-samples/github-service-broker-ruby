@@ -48,7 +48,7 @@ For example, to deploy this broker application to Cloud Foundry
 2. log in as a cloud controller admin using `cf login` or `gcf login`
 3. clone this git repository
 4. [TODO] add the GitHub credentials for the account in which you want this service broker to provide respository services
-5. [TODO] configure Basic Auth credentials
+5. edit the Basic Auth username and password in `settings.yml`
 6. `cd` into the application root directory
 7. run `cf push` to deploy the application to Cloud Foundry
 

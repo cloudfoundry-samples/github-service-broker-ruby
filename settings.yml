@@ -1,0 +1,3 @@
+basic_auth:
+  username: admin
+  password: password
