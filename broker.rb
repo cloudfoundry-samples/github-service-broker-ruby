@@ -2,6 +2,10 @@ require 'sinatra'
 require 'json'
 
 class ServiceBroker < Sinatra::Base
+  use Rack::Auth::Basic do |username, password|
+    username == 'admin' and password == 'password'
+  end
+
   get "/v2/catalog" do
     content_type :json
 
