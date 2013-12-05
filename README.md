@@ -1,6 +1,15 @@
 github-service-broker-ruby
 ==========================
 
+##Build Status
+
+[![Build Status](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby.png?branch=develop)](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby) (develop branch)
+
+[![Build Status](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby.png?branch=master)](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby) (master)
+
+
+## Introduction
+
 A Service Broker is required to integrate any service as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed) on Cloud Foundry.
 
 This sample Service Broker is written in ruby, and can be used as a basis for writing broker for any other services.
