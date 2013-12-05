@@ -35,10 +35,17 @@ delete | deletes the service instance (repository).
 
 The GitHub credentials of the GitHub account adminstrator are hardcoded and should be changed if you are deploying your own instance of this broker application.  We suggest that you create a dedicated GitHub account solely for the purpose of testing this broker (since it will create and destroy repositories).
 
+## Configuring the Service Broker
 
+The `settings.yml` file contains the values for these broker configurations:
 
+1. basic auth username and password
+2. service catalog description
+3. [TODO] GitHub account credentials
 
-## Deployment
+Make changes to this yml file to customize your service broker.
+
+# Deployment
 
 This application can be deployed on any environment or hosting service.
 
@@ -54,7 +61,7 @@ For example, to deploy this broker application to Cloud Foundry
 
 
 
-## Adding your Service Broker
+## Adding the Service Broker
 
 In order for Cloud Foundry to make a service available to applications deployed on it, the service broker must be added to Cloud Foundry.
 
