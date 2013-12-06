@@ -77,7 +77,7 @@ The `cf add-service-broker` command is used to register the broker. The meaning 
 
 Field | Value |
 -------- | :--------------- |
-Name | ????
+Name | A unique name for the broker
 URL | the URL at which the service broker is running
 Username | Basic Auth username needed for Cloud Foundry to access the endpoints on the service broker
 Password | Basic Auth password
@@ -102,8 +102,8 @@ To verify that the broker has been added successfully:
 > cf services --marketplace
 Getting services... OK
 
-service                     version   provider   plans   description
-GitHub repository service   n/a       n/a        free    An instance of this service provides a repository which an app write to and read from
+service       version   provider   plans    description                                           
+github-repo   n/a       n/a        public   Provides read and write access to a GitHub repository.
 ```
 
 ### Making the Service Plans Public
@@ -111,9 +111,17 @@ GitHub repository service   n/a       n/a        free    An instance of this ser
 Please refer to the "Making a Plan Public" section of [Writing a Cloud Foundry Service Broker](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html) on instructions for how to make plans public.
 
 
+## Adding multiple service brokers
+
+Multiple service brokers may be added to a Cloud Foundry, but the following constraints must be kept in mind:
+
+- It's not possible to have multiple brokers with the same name
+- It's not possible to have multiple brokers with the same URL
+- The service id and plan ids of each service advertised by the broker must be unique across Cloud Foundry (GUIDs should be used for these fields)
+
 
 ## Misc
-The Cloud Foundry commands used in this document were verified using the following CLI tool versions:
+The Cloud Foundry commands used in this document were verified using CLI tools of the following versions:
 
 ```
 cf 5.4.3
