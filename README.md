@@ -99,6 +99,16 @@ Adding service broker github-repo-broker... OK
 To verify that the broker has been added successfully:
 
 ```
+> cf service-brokers
+Getting service brokers... OK
+
+Name            URL
+github-repo     http://github-repo-service-broker.10.244.0.34.xip.io
+```
+
+`cf` allows an admin to see services imported from the broker before end users can. `gcf` does not support this. 
+
+```
 > cf services --marketplace
 Getting services... OK
 
