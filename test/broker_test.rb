@@ -71,3 +71,55 @@ describe "/v2/catalog" do
   end
 end
 
+describe "/v2/service_instances/:id" do
+  before do
+    @id = 1234
+  end
+
+  describe "when basic auth credentials are missing" do
+    before do
+      get "/v2/service_instances/#{@id}"
+    end
+
+    it "returns a 401 unauthorized response" do
+      assert_equal 401, last_response.status
+    end
+  end
+
+  describe "when basic auth credentials are incorrect" do
+    before do
+      authorize "admin", "wrong-password"
+      get "/v2/service_instances/#{@id}"
+    end
+
+    it "returns a 401 unauthorized response" do
+      assert_equal 401, last_response.status
+    end
+  end
+
+  describe "when basic auth credentials are correct" do
+
+    before do
+      authorize "admin", "password"
+
+      @fake_github_service = mock
+      @fake_github_service.stubs(:create_repo).returns("http://some.repository.url")
+      GithubService.stubs(:new).returns(@fake_github_service)
+    end
+
+    it "returns '201 Created'" do
+      get "/v2/service_instances/#{@id}"
+      assert_equal 201, last_response.status
+    end
+
+    it "returns json representation of dashboard URL" do
+      get "/v2/service_instances/#{@id}"
+
+      expected_json = {
+          "dashboard_url" => "http://some.repository.url"
+      }.to_json
+
+      assert_equal expected_json, last_response.body
+    end
+  end
+end

@@ -33,15 +33,18 @@ bind | generates a GitHub deploy key which gives write access to the repository,
 unbind | destroys the deploy key bound to the service instance.
 delete | deletes the service instance (repository).
 
-The GitHub credentials of the GitHub account adminstrator are hardcoded and should be changed if you are deploying your own instance of this broker application.  We suggest that you create a dedicated GitHub account solely for the purpose of testing this broker (since it will create and destroy repositories).
+The GitHub credentials of the GitHub account adminstrator should be specified in `settings.yml` if you are deploying your own instance of this broker application. We suggest that you create a dedicated GitHub account solely for the purpose of testing this broker (since it will create and destroy repositories).
+
 
 ## Configuring the Service Broker
 
-The `settings.yml` file contains the values for these broker configurations:
+You should rename `settings.example.yml` to `settings.yml`. 
+
+The `settings.yml` file should contain the values for these broker configurations:
 
 1. basic auth username and password
 2. service catalog description
-3. [TODO] GitHub account credentials
+3. GitHub account credentials
 
 Make changes to this yml file to customize your service broker.
 
