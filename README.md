@@ -78,7 +78,7 @@ The `cf add-service-broker` command is used to register the broker. The meaning 
 Field | Value |
 -------- | :--------------- |
 Name | A unique name for the broker
-URL | the URL at which the service broker is running
+URL | The unique URL at which the service broker is running
 Username | Basic Auth username needed for Cloud Foundry to access the endpoints on the service broker
 Password | Basic Auth password
 
@@ -95,6 +95,16 @@ Password> password
 
 Adding service broker github-repo-broker... OK
 ```
+
+If the incorrect credentials are provided, `cf` returns a unhelpful error: 
+```
+CFoundry::ServerError: 10001: The service broker API returned an error from http://github-broker.primo.cf-app.com/v2/catalog: 404 Not Found
+```
+`gcf` provides a meaningful error:
+```
+Server error, status code: 500, error code: 10001, message: Authentication failed for the service broker API. Double-check that the username and password are correct: http://github-broker.primo.cf-app.com/v2/catalog
+```
+
 
 To verify that the broker has been added successfully:
 
