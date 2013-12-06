@@ -104,7 +104,15 @@ CFoundry::ServerError: 10001: The service broker API returned an error from http
 ```
 Server error, status code: 500, error code: 10001, message: Authentication failed for the service broker API. Double-check that the username and password are correct: http://github-broker.primo.cf-app.com/v2/catalog
 ```
-
+If you receive the following errors, check your broker logs. You may have an internal error.
+`cf`
+```
+CFoundry::ServerError: 10001: The service broker API returned an error from http://github-broker.primo.cf-app.com/v2/catalog: 500 Internal Server Error
+```
+`gcf`
+```
+Server error, status code: 500, error code: 10001, message: The service broker API returned an error from http://github-broker.primo.cf-app.com/v2/catalog: 500 Internal Server Error
+```
 
 To verify that the broker has been added successfully:
 
