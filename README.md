@@ -115,6 +115,18 @@ CFoundry::ServerError: 10001: The service broker API returned an error from http
 Server error, status code: 500, error code: 10001, message: The service broker API returned an error from http://github-broker.primo.cf-app.com/v2/catalog: 500 Internal Server Error
 ```
 
+If your unique_ids for service and plan are not unique, you should get an error. Currently these errors aren't helpful, but it's a known issue and will be fixed soon.
+
+For 'gcf' the error isn't helpful:
+```
+Server error, status code: 400, error code: 10004, message: The request is invalid
+```
+A similar error for 'cf' 
+```
+CFoundry::InvalidRequest: 10004: The request is invalid
+```
+
+
 To verify that the broker has been added successfully:
 
 ```
