@@ -7,9 +7,13 @@ def app
 end
 
 describe "/v2/catalog" do
+  def make_request
+    get "/v2/catalog"
+  end
+
   describe "when basic auth credentials are missing" do
     before do
-      get "/v2/catalog"
+      make_request
     end
 
     it "returns a 401 unauthorized response" do
@@ -20,7 +24,7 @@ describe "/v2/catalog" do
   describe "when basic auth credentials are incorrect" do
     before do
       authorize "admin", "wrong-password"
-      get "/v2/catalog"
+      make_request
     end
 
     it "returns a 401 unauthorized response" do
@@ -31,7 +35,7 @@ describe "/v2/catalog" do
   describe "when basic auth credentials are correct" do
     before do
       authorize "admin", "password"
-      get "/v2/catalog"
+      make_request
     end
 
     it "returns a 200 response" do
@@ -76,9 +80,13 @@ describe "/v2/service_instances/:id" do
     @id = 1234
   end
 
+  def make_request
+    put "/v2/service_instances/#{@id}"
+  end
+
   describe "when basic auth credentials are missing" do
     before do
-      get "/v2/service_instances/#{@id}"
+      make_request
     end
 
     it "returns a 401 unauthorized response" do
@@ -89,7 +97,7 @@ describe "/v2/service_instances/:id" do
   describe "when basic auth credentials are incorrect" do
     before do
       authorize "admin", "wrong-password"
-      get "/v2/service_instances/#{@id}"
+      make_request
     end
 
     it "returns a 401 unauthorized response" do
@@ -98,28 +106,87 @@ describe "/v2/service_instances/:id" do
   end
 
   describe "when basic auth credentials are correct" do
-
     before do
       authorize "admin", "password"
 
       @fake_github_service = mock
-      @fake_github_service.stubs(:create_repo).returns("http://some.repository.url")
       GithubService.stubs(:new).returns(@fake_github_service)
     end
 
-    it "returns '201 Created'" do
-      get "/v2/service_instances/#{@id}"
-      assert_equal 201, last_response.status
+    describe "when repo is successfully created" do
+      before do
+        @fake_github_service.stubs(:create_repo).returns("http://some.repository.url")
+        make_request
+      end
+
+      it "returns '201 Created'" do
+        assert_equal 201, last_response.status
+      end
+
+      it "returns json representation of dashboard URL" do
+        expected_json = {
+            "dashboard_url" => "http://some.repository.url"
+        }.to_json
+
+        assert_equal expected_json, last_response.body
+      end
     end
 
-    it "returns json representation of dashboard URL" do
-      get "/v2/service_instances/#{@id}"
+    describe "when the repo already exists" do
+      before do
+        @fake_github_service.stubs(:create_repo).raises GithubService::RepoAlreadyExistsError
+        make_request
+      end
 
-      expected_json = {
-          "dashboard_url" => "http://some.repository.url"
-      }.to_json
+      it "returns '409 Conflict'" do
+        assert_equal 409, last_response.status
+      end
 
-      assert_equal expected_json, last_response.body
+      it "returns a JSON message explaining the error" do
+        expected_json = {
+            "message" => "The repo #{@id} already exists in the GitHub account"
+        }.to_json
+
+        assert_equal expected_json, last_response.body
+      end
+    end
+
+    describe "when GitHub is not reachable" do
+      before do
+        @fake_github_service.stubs(:create_repo).raises GithubService::GithubUnreachableError
+        make_request
+      end
+
+      it "returns 504 Gateway Timeout" do
+        assert_equal 504, last_response.status
+      end
+
+      it "returns a JSON message explaining the error" do
+        expected_json = {
+            "message" => "GitHub is not reachable"
+        }.to_json
+
+        assert_equal expected_json, last_response.body
+      end
+    end
+
+    describe "when GitHub returns any other error" do
+      before do
+        @fake_github_service.stubs(:create_repo).raises GithubService::GithubError.new("some message")
+        make_request
+      end
+
+      it "returns 502 Bad Gateway" do
+        assert_equal 502, last_response.status
+      end
+
+      it "returns a JSON message explaining the error" do
+        expected_json = {
+            "message" => "some message"
+        }.to_json
+
+        assert_equal expected_json, last_response.body
+      end
     end
   end
 end

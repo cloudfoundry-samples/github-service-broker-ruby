@@ -14,10 +14,23 @@ class ServiceBroker < Sinatra::Base
     self.class.app_settings["catalog"].to_json
   end
 
-  get "/v2/service_instances/:id" do
-    status 201
+  put "/v2/service_instances/:id" do
+    repo_name = params[:id]
 
-    {"dashboard_url" => github_service.create_repo(params[:id])}.to_json
+    begin
+      repo_url = github_service.create_repo(repo_name)
+      status 201
+      {"dashboard_url" => repo_url}.to_json
+    rescue GithubService::RepoAlreadyExistsError
+      status 409
+      {"message" => "The repo #{repo_name} already exists in the GitHub account"}.to_json
+    rescue GithubService::GithubUnreachableError
+      status 504
+      {"message" => "GitHub is not reachable"}.to_json
+    rescue GithubService::GithubError => e
+      status 502
+      {"message" => e.message}.to_json
+    end
   end
 
   def self.app_settings
