@@ -42,7 +42,7 @@ describe "/v2/catalog" do
       assert_equal 200, last_response.status
     end
 
-    it "returns a JSON" do
+    it "specifies the content type of the response" do
       last_response.header["Content-Type"].must_include("application/json")
     end
 
@@ -121,6 +121,10 @@ describe "/v2/service_instances/:id" do
 
       it "returns '201 Created'" do
         assert_equal 201, last_response.status
+      end
+
+      it "specifies the content type of the response" do
+        last_response.header["Content-Type"].must_include("application/json")
       end
 
       it "returns json representation of dashboard URL" do

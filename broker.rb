@@ -15,6 +15,8 @@ class ServiceBroker < Sinatra::Base
   end
 
   put "/v2/service_instances/:id" do
+    content_type :json
+
     repo_name = params[:id]
 
     begin
