@@ -23,13 +23,13 @@ class ServiceBroker < Sinatra::Base
       {"dashboard_url" => repo_url}.to_json
     rescue GithubService::RepoAlreadyExistsError
       status 409
-      {"message" => "The repo #{repo_name} already exists in the GitHub account"}.to_json
+      {"description" => "The repo #{repo_name} already exists in the GitHub account"}.to_json
     rescue GithubService::GithubUnreachableError
       status 504
-      {"message" => "GitHub is not reachable"}.to_json
+      {"description" => "GitHub is not reachable"}.to_json
     rescue GithubService::GithubError => e
       status 502
-      {"message" => e.message}.to_json
+      {"description" => e.message}.to_json
     end
   end
 

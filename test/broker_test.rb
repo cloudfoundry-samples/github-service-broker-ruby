@@ -142,9 +142,9 @@ describe "/v2/service_instances/:id" do
         assert_equal 409, last_response.status
       end
 
-      it "returns a JSON message explaining the error" do
+      it "returns a JSON response explaining the error" do
         expected_json = {
-            "message" => "The repo #{@id} already exists in the GitHub account"
+            "description" => "The repo #{@id} already exists in the GitHub account"
         }.to_json
 
         assert_equal expected_json, last_response.body
@@ -161,9 +161,9 @@ describe "/v2/service_instances/:id" do
         assert_equal 504, last_response.status
       end
 
-      it "returns a JSON message explaining the error" do
+      it "returns a JSON response explaining the error" do
         expected_json = {
-            "message" => "GitHub is not reachable"
+            "description" => "GitHub is not reachable"
         }.to_json
 
         assert_equal expected_json, last_response.body
@@ -180,9 +180,9 @@ describe "/v2/service_instances/:id" do
         assert_equal 502, last_response.status
       end
 
-      it "returns a JSON message explaining the error" do
+      it "returns a JSON response explaining the error" do
         expected_json = {
-            "message" => "some message"
+            "description" => "some message"
         }.to_json
 
         assert_equal expected_json, last_response.body
