@@ -155,7 +155,7 @@ github-repo   n/a       n/a        public   Provides read and write access to a 
 Please refer to the "Making a Plan Public" section of [Writing a Cloud Foundry Service Broker](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html) on instructions for how to make plans public.
 
 
-## Adding multiple service brokers
+### Adding multiple service brokers
 
 Multiple service brokers may be added to a Cloud Foundry, but the following constraints must be kept in mind:
 

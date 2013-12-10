@@ -1,16 +1,7 @@
-GIT
-  remote: https://github.com/robertomiranda/webmock.git
-  revision: 8baee153b3619578edc0fbead93ad86e22de35c1
-  branch: response_pathname
-  specs:
-    webmock (1.8.8)
-      addressable (~> 2.2.8)
-      crack (>= 0.1.7)
-
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.2.8)
+    addressable (2.3.5)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
     faraday (0.8.8)
@@ -20,23 +11,25 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multipart-post (1.2.0)
-    octokit (2.1.1)
-      sawyer (~> 0.3.0)
+    octokit (2.6.3)
+      sawyer (~> 0.5.1)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
     safe_yaml (0.9.7)
-    sawyer (0.3.0)
+    sawyer (0.5.1)
+      addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
-      uri_template (~> 0.5.0)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     tilt (1.4.1)
-    uri_template (0.5.3)
+    webmock (1.16.0)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
 
 PLATFORMS
   ruby
@@ -44,7 +37,7 @@ PLATFORMS
 DEPENDENCIES
   json
   mocha
-  octokit (= 2.1.1)
+  octokit
   rack-test
   sinatra
-  webmock!
+  webmock
