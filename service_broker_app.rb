@@ -41,7 +41,8 @@ class ServiceBrokerApp < Sinatra::Base
   private
 
   def self.app_settings
-    @app_settings ||= YAML.load_file('config/settings.yml')
+    settings_filename = SETTINGS_FILENAME || 'config/settings.yml'
+    @app_settings ||= YAML.load_file(settings_filename)
   end
 
   def github_service
