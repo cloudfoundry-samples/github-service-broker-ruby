@@ -1,4 +1,9 @@
+branches:
+  only:
+    - develop
+
 language: ruby
 rvm:
   - 2.0.0
-script: "bundle exec rake test"
+
+script: "cd service_broker; bundle exec rake test"
