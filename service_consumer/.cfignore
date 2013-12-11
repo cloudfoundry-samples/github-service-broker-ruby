@@ -1,0 +1,5 @@
+# files of the following types are ignored when pushing to Cloud Foundry
+# see http://docs.cloudfoundry.com/docs/using/deploying-apps/
+
+/.idea
+/test

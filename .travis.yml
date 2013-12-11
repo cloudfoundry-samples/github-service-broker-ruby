@@ -6,4 +6,4 @@ language: ruby
 rvm:
   - 2.0.0
 
-script: "cd service_broker; bundle install --deployment; bundle exec rake test"
+script: ./ci.sh
