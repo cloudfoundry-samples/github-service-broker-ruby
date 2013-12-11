@@ -14,7 +14,7 @@ A Service Broker is required to integrate any service as a [Managed Service](htt
 
 This sample Service Broker is written in ruby, and can be used as a basis for writing broker for any other services.
 
-This example is a standalone ruby application (based on Sinatra) that implements the [v2.0 Service Broker API (also known as the Services API)](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html).
+This example is a standalone ruby application (based on [Sinatra](https://github.com/sinatra/sinatra)) that implements the [v2.0 Service Broker API (also known as the Services API)](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html).
 
 Generally, a Service Broker can either be a standalone application that communicates with a service that it administers, or a Service Broker can be implemented as a component of a service. I.e. if the service itself is a Ruby on Rails application, the code in this repository can be added into the application (either copied in, or added as a Rails engine).
 
