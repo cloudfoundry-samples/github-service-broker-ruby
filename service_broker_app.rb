@@ -6,14 +6,15 @@ require_relative 'models/github_service'
 class ServiceBrokerApp < Sinatra::Base
   #configure the Sinatra app
   use Rack::Auth::Basic do |username, password|
-    username == self.app_settings["basic_auth"]["username"] and password == self.app_settings["basic_auth"]["password"]
+    credentials = self.app_settings.fetch("basic_auth")
+    username == credentials.fetch("username") and password == credentials.fetch("password")
   end
 
   #declare the routes used by the app
   get "/v2/catalog" do
     content_type :json
 
-    self.class.app_settings["catalog"].to_json
+    self.class.app_settings.fetch("catalog").to_json
   end
 
   put "/v2/service_instances/:id" do
@@ -46,6 +47,7 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   def github_service
-    GithubService.new(self.class.app_settings["github"]["username"], self.class.app_settings["github"]["password"])
+    github_credentials = self.class.app_settings.fetch("github")
+    GithubService.new(github_credentials.fetch("username"), github_credentials.fetch("password"))
   end
 end
