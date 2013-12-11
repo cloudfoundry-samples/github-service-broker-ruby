@@ -1,13 +1,15 @@
 require 'sinatra'
 require 'json'
 require 'yaml'
-require_relative 'github_service'
+require_relative 'models/github_service'
 
-class ServiceBroker < Sinatra::Base
+class ServiceBrokerApp < Sinatra::Base
+  #configure the Sinatra app
   use Rack::Auth::Basic do |username, password|
     username == self.app_settings["basic_auth"]["username"] and password == self.app_settings["basic_auth"]["password"]
   end
 
+  #declare the routes used by the app
   get "/v2/catalog" do
     content_type :json
 
@@ -35,8 +37,11 @@ class ServiceBroker < Sinatra::Base
     end
   end
 
+  #helper methods
+  private
+
   def self.app_settings
-    @app_settings ||= YAML.load_file('settings.yml')
+    @app_settings ||= YAML.load_file('config/settings.yml')
   end
 
   def github_service
