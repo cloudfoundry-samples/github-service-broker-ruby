@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    metaclass (0.0.1)
+    mocha (0.14.0)
+      metaclass (~> 0.0.1)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
@@ -16,5 +19,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  mocha
   rack-test
   sinatra
