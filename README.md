@@ -10,7 +10,7 @@ github-service-broker-ruby
 
 ## Introduction
 
-A Service Broker is required to integrate any service as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed) on Cloud Foundry.
+A Service Broker is required to integrate any service as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed) on a Cloud Foundry instance. (For brevity, we'll refer to such an instance simply as "Cloud Foundry".)
 
 This sample Service Broker is written in ruby, and can be used as a basis for writing broker for any other services.
 
