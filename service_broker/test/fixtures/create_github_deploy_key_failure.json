@@ -1,0 +1,12 @@
+{
+    "message":"Validation Failed",
+    "documentation_url":"http://developer.github.com/v3/repos/keys/#create",
+    "errors":[
+        {
+            "resource":"PublicKey",
+            "code":"custom",
+            "field":"key",
+            "message":"key is invalid. Ensure you've copied the file correctly"
+        }
+    ]
+}

@@ -11,16 +11,19 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   #declare the routes used by the app
+
+  # CATALOG
   get "/v2/catalog" do
     content_type :json
 
     self.class.app_settings.fetch("catalog").to_json
   end
 
-  put "/v2/service_instances/:id" do
+  # PROVISION
+  put "/v2/service_instances/:id" do |id|
     content_type :json
 
-    repo_name = params[:id]
+    repo_name = id
 
     begin
       repo_url = github_service.create_repo(repo_name)
@@ -29,6 +32,26 @@ class ServiceBrokerApp < Sinatra::Base
     rescue GithubService::RepoAlreadyExistsError
       status 409
       {"description" => "The repo #{repo_name} already exists in the GitHub account"}.to_json
+    rescue GithubService::GithubUnreachableError
+      status 504
+      {"description" => "GitHub is not reachable"}.to_json
+    rescue GithubService::GithubError => e
+      status 502
+      {"description" => e.message}.to_json
+    end
+  end
+
+  # BIND
+  put '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, id|
+    content_type :json
+
+    begin
+      credentials = github_service.create_deploy_key(repo_name: instance_id, deploy_key_title: id)
+      status 201
+      {"credentials" => credentials}.to_json
+    rescue GithubService::BindingAlreadyExistsError
+      status 409
+      {"description" => "The binding #{id} already exists"}.to_json
     rescue GithubService::GithubUnreachableError
       status 504
       {"description" => "GitHub is not reachable"}.to_json
