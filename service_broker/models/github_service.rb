@@ -34,7 +34,8 @@ class GithubService
   end
 
   def create_deploy_key(options)
-    full_repo_name = full_repo_name(options.fetch(:repo_name))
+    repo_name = options.fetch(:repo_name)
+    full_repo_name = full_repo_name(repo_name)
     deploy_key_title = options.fetch(:deploy_key_title)
 
     deploy_key_list = get_deploy_keys(full_repo_name)
@@ -47,6 +48,7 @@ class GithubService
     add_deploy_key(deploy_key_title, full_repo_name, public_key)
 
     {
+        name: repo_name,
         uri: repo_url(full_repo_name),
         private_key: key_pair.private_key
     }

@@ -172,6 +172,7 @@ describe GithubService do
       it "returns credentials, with repo URI and private key" do
         response = GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         response.must_equal({
+                                name: @repo_name,
                                 uri: "https://github.com/octocat/#{@repo_name}",
                                 private_key: @private_key
                             })
