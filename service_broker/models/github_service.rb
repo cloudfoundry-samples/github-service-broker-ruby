@@ -1,4 +1,5 @@
 require 'octokit'
+require 'sshkey'
 
 class GithubService
   class RepoAlreadyExistsError < StandardError

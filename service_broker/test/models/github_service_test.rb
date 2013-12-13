@@ -1,5 +1,4 @@
 require File.expand_path '../../test_helper.rb', __FILE__
-require 'sshkey'
 
 include Rack::Test::Methods
 
