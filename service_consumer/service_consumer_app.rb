@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'json'
 
 class ServiceConsumerApp < Sinatra::Base
 
@@ -6,25 +7,39 @@ class ServiceConsumerApp < Sinatra::Base
 
   get "/" do
     content_type "text/plain"
-    no_bindings_exist_message
+    messages
   end
 
   get "/env" do
     content_type "text/plain"
 
-    if ENV["VCAP_SERVICES"].nil?
-      response_body = "The environment variable VCAP_SERVICES is not found."
-    else
-      response_body = "VCAP_SERVICES = \n#{ENV["VCAP_SERVICES"]}"
-      response_body << "\n\n#{no_bindings_exist_message}"
-    end
+    #TODO: do we need to check if VCAP_SERVICES does not exist?
+    response_body = "VCAP_SERVICES = \n#{ENV["VCAP_SERVICES"]}"
+    response_body << messages
     response_body
   end
 
   # helper methods
   private
 
+  def messages
+    result = ""
+    result << "#{no_bindings_exist_message}" unless bindings_exist
+    result << "\n\nAfter binding or unbinding any service instances, restart this application with 'cf restart <appname>'."
+    result
+  end
+
+  def bindings_exist
+    JSON.parse(ENV["VCAP_SERVICES"]).keys.any? { |key|
+      key.match service_name
+    }
+  end
+
   def no_bindings_exist_message
-    "You haven't bound any instances of the Github Repo service.\n\nAfter binding a service instance, restart this application with 'cf restart <appname>'."
+    "\n\nYou haven't bound any instances of the #{service_name} service."
+  end
+
+  def service_name
+    "github-repo"
   end
 end
