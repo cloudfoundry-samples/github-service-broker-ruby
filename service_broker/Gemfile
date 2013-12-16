@@ -3,8 +3,11 @@ ruby "2.0.0"
 
 gem 'sinatra'
 gem 'json'
-gem 'rack-test'
-gem 'mocha', require: false
-gem 'webmock'
 gem 'octokit'
 gem 'sshkey'
+
+group :test do
+  gem 'rack-test'
+  gem 'mocha', require: false
+  gem 'webmock'
+end

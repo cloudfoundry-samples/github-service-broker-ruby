@@ -174,6 +174,7 @@ describe GithubService do
         response.must_equal({
                                 name: @repo_name,
                                 uri: "https://github.com/octocat/#{@repo_name}",
+                                ssh_url: "git@github.com:octocat/#{@repo_name}.git",
                                 private_key: @private_key
                             })
       end

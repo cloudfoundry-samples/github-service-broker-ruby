@@ -2,5 +2,9 @@ source 'https://rubygems.org'
 ruby "2.0.0"
 
 gem 'sinatra'
-gem 'rack-test'
-gem 'mocha'
+
+group :test do
+  gem 'rack-test'
+  gem 'mocha', require: false
+  gem 'rerun'
+end

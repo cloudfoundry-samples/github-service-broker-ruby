@@ -30,7 +30,7 @@ class GithubService
       raise GithubService::GithubUnreachableError
     end
 
-    repo_url(response.full_name)
+    repo_https_url(response.full_name)
   end
 
   def create_deploy_key(options)
@@ -49,7 +49,8 @@ class GithubService
 
     {
         name: repo_name,
-        uri: repo_url(full_repo_name),
+        uri: repo_https_url(full_repo_name),
+        ssh_url: repo_ssh_url(full_repo_name),
         private_key: key_pair.private_key
     }
   end
@@ -81,7 +82,11 @@ class GithubService
     "#{@login}/#{repo_name}"
   end
 
-  def repo_url(full_repo_name)
+  def repo_ssh_url(full_repo_name)
+    "git@github.com:#{full_repo_name}.git"
+  end
+
+  def repo_https_url(full_repo_name)
     "https://github.com/#{full_repo_name}"
   end
 
