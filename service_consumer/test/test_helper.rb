@@ -5,3 +5,4 @@ require 'rack/test'
 require 'mocha/setup'
 
 require File.expand_path '../../service_consumer_app.rb', __FILE__
+require File.expand_path '../../models/github_repo_helper.rb', __FILE__

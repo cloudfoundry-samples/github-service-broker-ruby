@@ -2,9 +2,13 @@ source 'https://rubygems.org'
 ruby "2.0.0"
 
 gem 'sinatra'
+gem 'rack-flash3'
 
 group :test do
   gem 'rack-test'
   gem 'mocha', require: false
   gem 'rerun'
+  gem 'capybara'
+  gem 'capybara_minitest_spec'
+  gem 'octokit'
 end

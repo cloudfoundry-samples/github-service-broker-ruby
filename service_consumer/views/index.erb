@@ -1,0 +1,38 @@
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+<% if flash[:notice] %>
+    <%= flash[:notice] %>
+    <br/>
+    <br/>
+<% end %>
+
+<% unless repo_uris.nil? %>
+    <table>
+      <tr>
+        <th>Repo URL</th>
+        <th></th>
+      </tr>
+      <% repo_uris.each do |uri| %>
+          <tr>
+            <td><a href="<%= uri %>"><%= uri %></a></td>
+            <td>
+              <form action="/create_commit" method="post">
+                <input type="hidden" name="repo_uri" value="<%= uri %>">
+                <input type="submit" value="Create a commit">
+              </form>
+            </td>
+          </tr>
+      <% end %>
+    </table>
+    <br/>
+<% end %>
+
+<%= messages %>

@@ -1,15 +1,37 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    addressable (2.3.5)
+    capybara (2.2.0)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
+    capybara_minitest_spec (1.0.1)
+      capybara (>= 2)
+      minitest (>= 2)
+    faraday (0.8.8)
+      multipart-post (~> 1.2.0)
     ffi (1.9.3)
     listen (1.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     metaclass (0.0.1)
+    mime-types (2.0)
+    mini_portile (0.5.2)
+    minitest (5.2.0)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
+    multipart-post (1.2.0)
+    nokogiri (1.6.1)
+      mini_portile (~> 0.5.0)
+    octokit (2.6.3)
+      sawyer (~> 0.5.1)
     rack (1.5.2)
+    rack-flash3 (1.0.5)
+      rack
     rack-protection (1.5.1)
       rack
     rack-test (0.6.2)
@@ -21,17 +43,26 @@ GEM
       ffi (>= 0.5.0)
     rerun (0.8.2)
       listen (~> 1.0.3)
+    sawyer (0.5.1)
+      addressable (~> 2.3.5)
+      faraday (~> 0.8, < 0.10)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     tilt (1.4.1)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  capybara
+  capybara_minitest_spec
   mocha
+  octokit
+  rack-flash3
   rack-test
   rerun
   sinatra
