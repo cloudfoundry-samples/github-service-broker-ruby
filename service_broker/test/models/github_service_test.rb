@@ -12,7 +12,7 @@ describe GithubService do
       before do
         # stubbing the http request/response to GitHub API
         @expected_request = stub_request(:post, "https://octocat:github-password@api.github.com/user/repos").
-            with(:body => "{\"name\":\"#{@repo_name}\"}").
+            with(:body => {"auto_init" => true, "name" => @repo_name}.to_json).
             to_return(status: 201,
                       headers: {
                           "content-type" => "application/json; charset=utf-8"
@@ -35,7 +35,7 @@ describe GithubService do
     describe "when the repo already exists" do
       before do
         stub_request(:post, "https://octocat:github-password@api.github.com/user/repos").
-            with(:body => "{\"name\":\"#{@repo_name}\"}").
+            with(:body => {"auto_init" => true, "name" => @repo_name}.to_json).
             to_return(status: 422,
                       headers: {
                           "content-type" => "application/json; charset=utf-8"
@@ -54,7 +54,7 @@ describe GithubService do
     describe "when GitHub returns 422 for any reason other than a repo already existing" do
       before do
         stub_request(:post, "https://octocat:github-password@api.github.com/user/repos").
-            with(:body => "{\"name\":\"#{@repo_name}\"}").
+            with(:body => {"auto_init" => true, "name" => @repo_name}.to_json).
             to_return(status: 422,
                       headers: {
                           "content-type" => "application/json; charset=utf-8"
@@ -78,7 +78,7 @@ describe GithubService do
     describe "when GitHub returns any other error" do
       before do
         stub_request(:post, "https://octocat:github-password@api.github.com/user/repos").
-            with(:body => "{\"name\":\"#{@repo_name}\"}").
+            with(:body => {"auto_init" => true, "name" => @repo_name}.to_json).
             to_return(status: 404,
                       headers: {
                           "content-type" => "application/json; charset=utf-8"
@@ -102,7 +102,7 @@ describe GithubService do
     describe "when GitHub is not reachable" do
       before do
         stub_request(:post, "https://octocat:github-password@api.github.com/user/repos").
-            with(:body => "{\"name\":\"#{@repo_name}\"}").
+            with(:body => {"auto_init" => true, "name" => @repo_name}.to_json).
             to_timeout
       end
 

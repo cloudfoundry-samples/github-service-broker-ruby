@@ -18,7 +18,7 @@ class GithubService
 
   def create_repo(name)
     begin
-      response = github_client.create_repository(name)
+      response = github_client.create_repository(name, auto_init: true)
     rescue Octokit::Error => e
       if e.is_a?(Octokit::UnprocessableEntity) && (e.message.match /name already exists on this account/)
         raise GithubService::RepoAlreadyExistsError
