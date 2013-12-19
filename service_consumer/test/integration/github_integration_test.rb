@@ -1,8 +1,10 @@
-require File.expand_path '../test_helper.rb', __FILE__
+require File.expand_path '../../test_helper.rb', __FILE__
 require File.expand_path '../integration_test_helper.rb', __FILE__
 
 describe "/" do
   before do
+    ensure_env_vars_exist
+
     @vcap_services_value = <<JSON
       {
         "github-repo": [
@@ -40,15 +42,24 @@ JSON
   end
 end
 
-
 private
+
+def ensure_env_vars_exist
+   if [github_username, github_password, repo_name, repo_private_key].any?(&:nil?)
+     raise "PLEASE DEFINE THE REQUIRED ENV VARS FOR THE INTEGRATION TEST"
+   end
+end
 
 def count_commits_in_repo
   github_client.commits(repo_fullname).length
 end
 
-def username
+def github_username
   ENV["GITHUB_USERNAME"]
+end
+
+def github_password
+  ENV["GITHUB_PASSWORD"]
 end
 
 def repo_name
@@ -60,17 +71,17 @@ def repo_private_key
 end
 
 def repo_ssh_url
-  "git@github.com:#{username}/#{repo_name}.git"
+  "git@github.com:#{github_username}/#{repo_name}.git"
 end
 
 def repo_uri
-  "https://github.com/#{username}/#{repo_name}"
+  "https://github.com/#{github_username}/#{repo_name}"
 end
 
 def repo_fullname
-  "#{username}/#{repo_name}"
+  "#{github_username}/#{repo_name}"
 end
 
 def github_client
-  ::Octokit::Client.new(login: ENV["GITHUB_USERNAME"], password: ENV["GITHUB_PASSWORD"])
+  ::Octokit::Client.new(login: github_username, password: github_password)
 end

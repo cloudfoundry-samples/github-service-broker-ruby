@@ -4,6 +4,7 @@ require 'minitest/spec'
 require 'rack/test'
 require 'mocha/setup'
 require 'webmock/minitest'
+require 'pry'
 
 SETTINGS_FILENAME = "test/config/settings.yml"
 
