@@ -2,7 +2,7 @@ require File.expand_path '../../test_helper.rb', __FILE__
 
 include Rack::Test::Methods
 
-describe GithubService do
+describe GithubServiceHelper do
   describe "#create_repo" do
     before do
       @repo_name = "Hello-World"
@@ -22,12 +22,12 @@ describe GithubService do
       end
 
       it "makes request to github" do
-        GithubService.new('octocat', 'github-password').create_repo(@repo_name)
+        GithubServiceHelper.new('octocat', 'github-password').create_repo(@repo_name)
         assert_requested @expected_request
       end
 
       it "returns a repo url" do
-        response = GithubService.new('octocat', 'github-password').create_repo(@repo_name)
+        response = GithubServiceHelper.new('octocat', 'github-password').create_repo(@repo_name)
         response.must_equal "https://github.com/octocat/#{@repo_name}"
       end
     end
@@ -46,8 +46,8 @@ describe GithubService do
 
       it "raises RepoAlreadyExistsError" do
         proc {
-          GithubService.new('octocat', 'github-password').create_repo("Hello-World")
-        }.must_raise GithubService::RepoAlreadyExistsError
+          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+        }.must_raise GithubServiceHelper::RepoAlreadyExistsError
       end
     end
 
@@ -67,8 +67,8 @@ describe GithubService do
 
       it "raises CreateRepoError with a message" do
         expected_exception = proc {
-          GithubService.new('octocat', 'github-password').create_repo("Hello-World")
-        }.must_raise GithubService::GithubError
+          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+        }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
         expected_exception.message.must_match /Semantically Invalid/
@@ -91,8 +91,8 @@ describe GithubService do
 
       it "raises CreateRepoError with a message" do
         expected_exception = proc {
-          GithubService.new('octocat', 'github-password').create_repo("Hello-World")
-        }.must_raise GithubService::GithubError
+          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+        }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
         expected_exception.message.must_match /Validation Failed/
@@ -108,8 +108,8 @@ describe GithubService do
 
       it "raises GitHubUnreachableError" do
         proc {
-          GithubService.new('octocat', 'github-password').create_repo("Hello-World")
-        }.must_raise GithubService::GithubUnreachableError
+          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+        }.must_raise GithubServiceHelper::GithubUnreachableError
       end
     end
   end
@@ -165,12 +165,12 @@ describe GithubService do
       end
 
       it "makes a deploy key creation request to github" do
-        GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         assert_requested @expected_request
       end
 
       it "returns credentials, with repo URI and private key" do
-        response = GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        response = GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         response.must_equal({
                                 name: @repo_name,
                                 uri: "https://github.com/octocat/#{@repo_name}",
@@ -202,8 +202,8 @@ describe GithubService do
 
       it "raises a GithubError" do
         expected_exception = proc {
-          GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
-        }.must_raise GithubService::GithubError
+          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
         expected_exception.message.must_match /key is invalid. Ensure you've copied the file correctly/
@@ -227,8 +227,8 @@ describe GithubService do
 
       it "raises a GithubUnreachableError" do
         proc {
-          GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
-        }.must_raise GithubService::GithubUnreachableError
+          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        }.must_raise GithubServiceHelper::GithubUnreachableError
       end
 
     end
@@ -240,8 +240,8 @@ describe GithubService do
 
       it "raises a BindingAlreadyExistsError" do
         proc {
-          GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: "second-key")
-        }.must_raise GithubService::BindingAlreadyExistsError
+          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: "second-key")
+        }.must_raise GithubServiceHelper::BindingAlreadyExistsError
       end
     end
 
@@ -259,8 +259,8 @@ describe GithubService do
 
       it "raises a GithubError" do
         expected_exception = proc {
-          GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
-        }.must_raise GithubService::GithubError
+          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
         expected_exception.message.must_match /really informative message/
@@ -274,8 +274,8 @@ describe GithubService do
 
       it "raises a GithubUnreachableError" do
         proc {
-          GithubService.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
-        }.must_raise GithubService::GithubUnreachableError
+          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        }.must_raise GithubServiceHelper::GithubUnreachableError
       end
     end
   end

@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'yaml'
-require_relative 'models/github_service'
+require_relative 'models/github_service_helper'
 
 class ServiceBrokerApp < Sinatra::Base
   #configure the Sinatra app
@@ -29,13 +29,13 @@ class ServiceBrokerApp < Sinatra::Base
       repo_url = github_service.create_repo(repo_name)
       status 201
       {"dashboard_url" => repo_url}.to_json
-    rescue GithubService::RepoAlreadyExistsError
+    rescue GithubServiceHelper::RepoAlreadyExistsError
       status 409
       {"description" => "The repo #{repo_name} already exists in the GitHub account"}.to_json
-    rescue GithubService::GithubUnreachableError
+    rescue GithubServiceHelper::GithubUnreachableError
       status 504
       {"description" => "GitHub is not reachable"}.to_json
-    rescue GithubService::GithubError => e
+    rescue GithubServiceHelper::GithubError => e
       status 502
       {"description" => e.message}.to_json
     end
@@ -49,13 +49,13 @@ class ServiceBrokerApp < Sinatra::Base
       credentials = github_service.create_deploy_key(repo_name: instance_id, deploy_key_title: id)
       status 201
       {"credentials" => credentials}.to_json
-    rescue GithubService::BindingAlreadyExistsError
+    rescue GithubServiceHelper::BindingAlreadyExistsError
       status 409
       {"description" => "The binding #{id} already exists"}.to_json
-    rescue GithubService::GithubUnreachableError
+    rescue GithubServiceHelper::GithubUnreachableError
       status 504
       {"description" => "GitHub is not reachable"}.to_json
-    rescue GithubService::GithubError => e
+    rescue GithubServiceHelper::GithubError => e
       status 502
       {"description" => e.message}.to_json
     end
@@ -71,6 +71,6 @@ class ServiceBrokerApp < Sinatra::Base
 
   def github_service
     github_credentials = self.class.app_settings.fetch("github")
-    GithubService.new(github_credentials.fetch("username"), github_credentials.fetch("password"))
+    GithubServiceHelper.new(github_credentials.fetch("username"), github_credentials.fetch("password"))
   end
 end

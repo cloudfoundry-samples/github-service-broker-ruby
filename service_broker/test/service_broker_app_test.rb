@@ -110,7 +110,7 @@ describe "/v2/service_instances/:id" do
       authorize "admin", "password"
 
       @fake_github_service = mock
-      GithubService.stubs(:new).returns(@fake_github_service)
+      GithubServiceHelper.stubs(:new).returns(@fake_github_service)
     end
 
     describe "when repo is successfully created" do
@@ -138,7 +138,7 @@ describe "/v2/service_instances/:id" do
 
     describe "when the repo already exists" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubService::RepoAlreadyExistsError
+        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::RepoAlreadyExistsError
         make_request
       end
 
@@ -157,7 +157,7 @@ describe "/v2/service_instances/:id" do
 
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubService::GithubUnreachableError
+        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
 
@@ -176,7 +176,7 @@ describe "/v2/service_instances/:id" do
 
     describe "when GitHub returns any other error" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubService::GithubError.new("some message")
+        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::GithubError.new("some message")
         make_request
       end
 
@@ -231,7 +231,7 @@ describe "/v2/service_instances/:instance_id/service_bindings/:id" do
       authorize "admin", "password"
 
       @fake_github_service = mock
-      GithubService.stubs(:new).returns(@fake_github_service)
+      GithubServiceHelper.stubs(:new).returns(@fake_github_service)
     end
 
     describe "when binding succeeds" do
@@ -262,7 +262,7 @@ describe "/v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when the binding with the id already exists" do
       before do
-        @fake_github_service.stubs(:create_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).raises GithubService::BindingAlreadyExistsError
+        @fake_github_service.stubs(:create_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).raises GithubServiceHelper::BindingAlreadyExistsError
         make_request
       end
 
@@ -281,7 +281,7 @@ describe "/v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.stubs(:create_deploy_key).raises GithubService::GithubUnreachableError
+        @fake_github_service.stubs(:create_deploy_key).raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
 
@@ -300,7 +300,7 @@ describe "/v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when GitHub returns any other error" do
       before do
-        @fake_github_service.stubs(:create_deploy_key).raises GithubService::GithubError.new("some message")
+        @fake_github_service.stubs(:create_deploy_key).raises GithubServiceHelper::GithubError.new("some message")
         make_request
       end
 

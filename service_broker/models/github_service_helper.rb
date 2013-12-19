@@ -1,7 +1,7 @@
 require 'octokit'
 require 'sshkey'
 
-class GithubService
+class GithubServiceHelper
   class RepoAlreadyExistsError < StandardError
   end
   class BindingAlreadyExistsError < StandardError
@@ -21,13 +21,13 @@ class GithubService
       response = github_client.create_repository(name, auto_init: true)
     rescue Octokit::Error => e
       if e.is_a?(Octokit::UnprocessableEntity) && (e.message.match /name already exists on this account/)
-        raise GithubService::RepoAlreadyExistsError
+        raise GithubServiceHelper::RepoAlreadyExistsError
       else
         # error due to unknown reason, pass the original error message upstream
-        raise GithubService::GithubError.new("GitHub returned an error - #{e.message}")
+        raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
       end
     rescue Faraday::Error::TimeoutError
-      raise GithubService::GithubUnreachableError
+      raise GithubServiceHelper::GithubUnreachableError
     end
 
     repo_https_url(response.full_name)
@@ -40,7 +40,7 @@ class GithubService
 
     deploy_key_list = get_deploy_keys(full_repo_name)
 
-    raise GithubService::BindingAlreadyExistsError if deploy_key_list.map(&:title).include? deploy_key_title
+    raise GithubServiceHelper::BindingAlreadyExistsError if deploy_key_list.map(&:title).include? deploy_key_title
 
     key_pair = SSHKey.generate
     public_key = key_pair.ssh_public_key # get the public key in OpenSSH format
@@ -61,9 +61,9 @@ class GithubService
     begin
       github_client.add_deploy_key(full_repo_name, deploy_key_title, public_key)
     rescue Octokit::Error => e
-      raise GithubService::GithubError.new("GitHub returned an error - #{e.message}")
+      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
     rescue Faraday::Error::TimeoutError
-      raise GithubService::GithubUnreachableError
+      raise GithubServiceHelper::GithubUnreachableError
     end
   end
 
@@ -71,9 +71,9 @@ class GithubService
     begin
       deploy_key_list = github_client.list_deploy_keys(full_repo_name)
     rescue Octokit::Error => e
-      raise GithubService::GithubError.new("GitHub returned an error - #{e.message}")
+      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
     rescue Faraday::Error::TimeoutError
-      raise GithubService::GithubUnreachableError
+      raise GithubServiceHelper::GithubUnreachableError
     end
     deploy_key_list
   end
