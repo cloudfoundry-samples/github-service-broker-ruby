@@ -14,5 +14,5 @@ catalog:
           description: All repositories are public
 
 github:
-  username: <needs to be filled>
-  password: <needs to be filled>
+  username: github-username-goes-here
+  password: github-password-goes-here
