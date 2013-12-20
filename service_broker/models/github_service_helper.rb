@@ -18,7 +18,7 @@ class GithubServiceHelper
 
   def create_repo(name)
     begin
-      response = github_client.create_repository(name, auto_init: true)
+      response = octokit_client.create_repository(name, auto_init: true)
     rescue Octokit::Error => e
       if e.is_a?(Octokit::UnprocessableEntity) && (e.message.match /name already exists on this account/)
         raise GithubServiceHelper::RepoAlreadyExistsError
@@ -33,7 +33,7 @@ class GithubServiceHelper
     repo_https_url(response.full_name)
   end
 
-  def create_deploy_key(options)
+  def create_github_deploy_key(options)
     repo_name = options.fetch(:repo_name)
     full_repo_name = full_repo_name(repo_name)
     deploy_key_title = options.fetch(:deploy_key_title)
@@ -55,11 +55,33 @@ class GithubServiceHelper
     }
   end
 
+  def remove_github_deploy_key(options)
+    repo_name = options.fetch(:repo_name)
+    full_repo_name = full_repo_name(repo_name)
+    deploy_key_title = options.fetch(:deploy_key_title)
+
+    deploy_key_list = get_deploy_keys(full_repo_name)
+    deploy_key = deploy_key_list.select { |key| key.title == deploy_key_title}.first
+
+    return false if deploy_key.nil?
+    remove_deploy_key(full_repo_name, deploy_key.id)
+  end
+
   private
 
   def add_deploy_key(deploy_key_title, full_repo_name, public_key)
     begin
-      github_client.add_deploy_key(full_repo_name, deploy_key_title, public_key)
+      octokit_client.add_deploy_key(full_repo_name, deploy_key_title, public_key)
+    rescue Octokit::Error => e
+      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
+    rescue Faraday::Error::TimeoutError
+      raise GithubServiceHelper::GithubUnreachableError
+    end
+  end
+
+  def remove_deploy_key(full_repo_name, deploy_key_id)
+    begin
+      octokit_client.remove_deploy_key(full_repo_name, deploy_key_id)
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
     rescue Faraday::Error::TimeoutError
@@ -69,7 +91,7 @@ class GithubServiceHelper
 
   def get_deploy_keys(full_repo_name)
     begin
-      deploy_key_list = github_client.list_deploy_keys(full_repo_name)
+      deploy_key_list = octokit_client.list_deploy_keys(full_repo_name)
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
     rescue Faraday::Error::TimeoutError
@@ -90,7 +112,7 @@ class GithubServiceHelper
     "https://github.com/#{full_repo_name}"
   end
 
-  def github_client
+  def octokit_client
     ::Octokit::Client.new(login: @login, password: @password)
   end
 end

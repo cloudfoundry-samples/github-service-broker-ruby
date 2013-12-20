@@ -46,12 +46,32 @@ class ServiceBrokerApp < Sinatra::Base
     content_type :json
 
     begin
-      credentials = github_service.create_deploy_key(repo_name: instance_id, deploy_key_title: id)
+      credentials = github_service.create_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
       status 201
       {"credentials" => credentials}.to_json
     rescue GithubServiceHelper::BindingAlreadyExistsError
       status 409
       {"description" => "The binding #{id} already exists"}.to_json
+    rescue GithubServiceHelper::GithubUnreachableError
+      status 504
+      {"description" => "GitHub is not reachable"}.to_json
+    rescue GithubServiceHelper::GithubError => e
+      status 502
+      {"description" => e.message}.to_json
+    end
+  end
+
+  # UNBIND
+  delete '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, id|
+    content_type :json
+
+    begin
+      if github_service.remove_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
+        status 200
+      else
+        status 410
+      end
+      {}.to_json
     rescue GithubServiceHelper::GithubUnreachableError
       status 504
       {"description" => "GitHub is not reachable"}.to_json

@@ -3,6 +3,17 @@ require File.expand_path '../../test_helper.rb', __FILE__
 include Rack::Test::Methods
 
 describe GithubServiceHelper do
+  def stub_deploy_key_list_request(repo_name, empty = false)
+    response_body = empty ? "[]" : File.read("test/fixtures/list_github_deploy_keys.json")
+    stub_request(:get, "https://octocat:github-password@api.github.com/repos/octocat/#{repo_name}/keys").
+        to_return(status: 200,
+                  headers: {
+                      "content-type" => "application/json; charset=utf-8"
+                  },
+                  body: response_body
+    )
+  end
+
   describe "#create_repo" do
     before do
       @repo_name = "Hello-World"
@@ -115,16 +126,6 @@ describe GithubServiceHelper do
   end
 
   describe "#create_deploy_key" do
-    def stub_deploy_key_list_request(repo_name)
-      stub_request(:get, "https://octocat:github-password@api.github.com/repos/octocat/#{repo_name}/keys").
-          to_return(status: 200,
-                    headers: {
-                        "content-type" => "application/json; charset=utf-8"
-                    },
-                    body: File.read("test/fixtures/list_github_deploy_keys.json")
-      )
-    end
-
     def stub_key_pair_generation
       fake_ssh_key_pair = mock
 
@@ -165,12 +166,12 @@ describe GithubServiceHelper do
       end
 
       it "makes a deploy key creation request to github" do
-        GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         assert_requested @expected_request
       end
 
       it "returns credentials, with repo URI and private key" do
-        response = GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        response = GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         response.must_equal({
                                 name: @repo_name,
                                 uri: "https://github.com/octocat/#{@repo_name}",
@@ -178,7 +179,22 @@ describe GithubServiceHelper do
                                 private_key: @private_key
                             })
       end
+
+      describe "when there are no keys on github" do
+        it "still succeeds" do
+          stub_deploy_key_list_request(@repo_name, true)
+
+          response = GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          response.must_equal({
+                                  name: @repo_name,
+                                  uri: "https://github.com/octocat/#{@repo_name}",
+                                  ssh_url: "git@github.com:octocat/#{@repo_name}.git",
+                                  private_key: @private_key
+                              })
+        end
+      end
     end
+
 
     describe "when GitHub returns an error" do
       before do
@@ -202,7 +218,7 @@ describe GithubServiceHelper do
 
       it "raises a GithubError" do
         expected_exception = proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
@@ -227,7 +243,7 @@ describe GithubServiceHelper do
 
       it "raises a GithubUnreachableError" do
         proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         }.must_raise GithubServiceHelper::GithubUnreachableError
       end
 
@@ -240,7 +256,7 @@ describe GithubServiceHelper do
 
       it "raises a BindingAlreadyExistsError" do
         proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: "second-key")
+          GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: "second-key")
         }.must_raise GithubServiceHelper::BindingAlreadyExistsError
       end
     end
@@ -259,7 +275,7 @@ describe GithubServiceHelper do
 
       it "raises a GithubError" do
         expected_exception = proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
@@ -274,8 +290,117 @@ describe GithubServiceHelper do
 
       it "raises a GithubUnreachableError" do
         proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          GithubServiceHelper.new('octocat', 'github-password').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
         }.must_raise GithubServiceHelper::GithubUnreachableError
+      end
+    end
+  end
+
+  describe "#remove_deploy_key" do
+    before do
+      @repo_name = "whatever-repo"
+      @key_title = "second-key"
+      @key_id = 2
+
+      @expected_get_keys_request = stub_deploy_key_list_request(@repo_name)
+    end
+
+    it "requests a list of keys from github" do
+      stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}")
+
+      GithubServiceHelper.new('octocat', 'github-password').remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+      assert_requested @expected_get_keys_request
+    end
+
+    describe "when there are no keys on github" do
+      it "returns false" do
+        stub_deploy_key_list_request(@repo_name, true)
+
+        result = GithubServiceHelper.new('octocat', 'github-password').
+            remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: "does-not-exist")
+
+        assert_equal false, result
+      end
+    end
+
+    describe "when the requested key exists on github" do
+      before do
+        @expected_request = stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}")
+      end
+
+      it "makes a deploy key deletion request to github" do
+        GithubServiceHelper.new('octocat', 'github-password').remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+        assert_requested @expected_request
+      end
+
+      describe "when removal succeeds" do
+        before do
+          stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}").
+              to_return(status: 204)
+        end
+
+        it "returns true" do
+          result = GithubServiceHelper.new('octocat', 'github-password').
+              remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          assert_equal true, result
+        end
+      end
+
+      describe "when removal fails" do
+        before do
+          stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}").
+              to_return(status: 404)
+        end
+
+        it "returns false" do
+          result = GithubServiceHelper.new('octocat', 'github-password').
+              remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          assert_equal false, result
+        end
+      end
+
+      describe "when GitHub returns an error" do
+        before do
+          stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}").
+              to_return(status: 422,
+                        headers: {
+                            "content-type" => "application/json; charset=utf-8"
+                        },
+                        body: File.read("test/fixtures/create_github_deploy_key_failure.json"))
+        end
+
+        it "raises a GithubError" do
+          expected_exception = proc {
+            GithubServiceHelper.new('octocat', 'github-password').
+                remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          }.must_raise GithubServiceHelper::GithubError
+
+          expected_exception.message.must_match /GitHub returned an error/
+          expected_exception.message.must_match /key is invalid. Ensure you've copied the file correctly/
+        end
+      end
+
+      describe "when GitHub is not reachable" do
+        before do
+          stub_deploy_key_list_request(@repo_name)
+
+          stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}/keys/#{@key_id}").
+              to_timeout
+        end
+
+        it "raises a GithubUnreachableError" do
+          proc {
+            GithubServiceHelper.new('octocat', 'github-password').remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
+          }.must_raise GithubServiceHelper::GithubUnreachableError
+        end
+      end
+    end
+
+    describe "when the key title is not found on github" do
+      it "returns false" do
+        result = GithubServiceHelper.new('octocat', 'github-password').
+            remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: "does-not-exist")
+        assert_equal false, result
       end
     end
   end
