@@ -1,0 +1,12 @@
+{
+    "message":"Something Failed",
+    "documentation_url":"http://developer.github.com/v3/repos/#some-action",
+    "errors":[
+        {
+            "resource":"some resource",
+            "code":"custom",
+            "field":"some field",
+            "message":"some error message"
+        }
+    ]
+}

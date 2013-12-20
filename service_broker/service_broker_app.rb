@@ -26,7 +26,7 @@ class ServiceBrokerApp < Sinatra::Base
     repo_name = id
 
     begin
-      repo_url = github_service.create_repo(repo_name)
+      repo_url = github_service.create_github_repo(repo_name)
       status 201
       {"dashboard_url" => repo_url}.to_json
     rescue GithubServiceHelper::RepoAlreadyExistsError
@@ -67,6 +67,26 @@ class ServiceBrokerApp < Sinatra::Base
 
     begin
       if github_service.remove_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
+        status 200
+      else
+        status 410
+      end
+      {}.to_json
+    rescue GithubServiceHelper::GithubUnreachableError
+      status 504
+      {"description" => "GitHub is not reachable"}.to_json
+    rescue GithubServiceHelper::GithubError => e
+      status 502
+      {"description" => e.message}.to_json
+    end
+  end
+
+  # UNPROVISION
+  delete '/v2/service_instances/:instance_id' do |instance_id|
+    content_type :json
+
+    begin
+      if github_service.delete_github_repo(instance_id)
         status 200
       else
         status 410

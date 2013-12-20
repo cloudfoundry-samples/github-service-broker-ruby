@@ -38,7 +38,7 @@ describe "get /v2/catalog" do
       make_request
     end
 
-    it "returns a 200 response" do
+    it "returns a 200 OK response" do
       assert_equal 200, last_response.status
     end
 
@@ -115,7 +115,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when repo is successfully created" do
       before do
-        @fake_github_service.stubs(:create_repo).returns("http://some.repository.url")
+        @fake_github_service.stubs(:create_github_repo).returns("http://some.repository.url")
         make_request
       end
 
@@ -139,7 +139,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when the repo already exists" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::RepoAlreadyExistsError
+        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::RepoAlreadyExistsError
         make_request
       end
 
@@ -158,7 +158,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::GithubUnreachableError
+        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
 
@@ -177,7 +177,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when GitHub returns any other error" do
       before do
-        @fake_github_service.stubs(:create_repo).raises GithubServiceHelper::GithubError.new("some message")
+        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::GithubError.new("some message")
         make_request
       end
 
@@ -437,6 +437,121 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
           @fake_github_service.expects(:remove_github_deploy_key).
               with(repo_name: @instance_id, deploy_key_title: @binding_id).
               raises GithubServiceHelper::GithubError.new("some message")
+          make_request
+        end
+
+        it "returns 502 Bad Gateway" do
+          assert_equal 502, last_response.status
+        end
+
+        it "returns a JSON response explaining the error" do
+          expected_json = {
+              "description" => "some message"
+          }.to_json
+
+          assert_equal expected_json, last_response.body
+        end
+      end
+    end
+  end
+end
+
+describe "delete /v2/service_instances/:instance_id" do
+  before do
+    @instance_id = "1234-5678"
+  end
+
+  def make_request
+    delete "/v2/service_instances/#{@instance_id}"
+  end
+
+  describe "when basic auth credentials are missing" do
+    before do
+      make_request
+    end
+
+    it "returns a 401 unauthorized response" do
+      assert_equal 401, last_response.status
+    end
+  end
+
+  describe "when basic auth credentials are incorrect" do
+    before do
+      authorize "admin", "wrong-password"
+      make_request
+    end
+
+    it "returns a 401 unauthorized response" do
+      assert_equal 401, last_response.status
+    end
+  end
+
+  describe "when basic auth credentials are correct" do
+    before do
+      authorize "admin", "password"
+
+      @fake_github_service = mock
+      GithubServiceHelper.stubs(:new).returns(@fake_github_service)
+    end
+
+    describe "when repo is successfully deleted" do
+      before do
+        @fake_github_service.stubs(:delete_github_repo).returns(true)
+        make_request
+      end
+
+      it "returns '200 OK'" do
+        assert_equal 200, last_response.status
+      end
+
+      it "specifies the content type of the response" do
+        last_response.header["Content-Type"].must_include("application/json")
+      end
+
+      it "returns empty JSON" do
+        assert_equal "{}", last_response.body
+      end
+    end
+
+    describe "when repo deletion fails" do
+      describe "because the specified repo is not found" do
+        before do
+          @fake_github_service.expects(:delete_github_repo).with(@instance_id).returns(false)
+
+          make_request
+        end
+
+        it "returns a 410 Not found" do
+          assert_equal 410, last_response.status
+        end
+
+        it "returns an empty JSON body" do
+          last_response.body.must_equal("{}")
+        end
+      end
+
+      describe "because GitHub is not reachable" do
+        before do
+          @fake_github_service.stubs(:delete_github_repo).raises GithubServiceHelper::GithubUnreachableError
+          make_request
+        end
+
+        it "returns 504 Gateway Timeout" do
+          assert_equal 504, last_response.status
+        end
+
+        it "returns a JSON response explaining the error" do
+          expected_json = {
+              "description" => "GitHub is not reachable"
+          }.to_json
+
+          assert_equal expected_json, last_response.body
+        end
+      end
+
+      describe "because GitHub returns any other error" do
+        before do
+          @fake_github_service.stubs(:delete_github_repo).raises GithubServiceHelper::GithubError.new("some message")
           make_request
         end
 

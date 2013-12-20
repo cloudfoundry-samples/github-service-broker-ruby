@@ -13,7 +13,7 @@ class GithubRepoHelper
   def create_commit(repo_uri)
     repo_credentials = credentials_for_repo_uri(repo_uri)
     raise RepoUriNotFoundError if repo_credentials.nil?
-    raise RepoCredentialsInvalidError unless credentials_are_valid?(repo_credentials)
+    raise RepoCredentialsInvalidError unless credentials_are_present?(repo_credentials)
 
     create_and_push_result = shell_create_and_push_commit(repo_credentials)
 
@@ -23,13 +23,11 @@ class GithubRepoHelper
   private
 
   def credentials_for_repo_uri(uri)
-    matching_credentials = @all_repo_credentials.select do |credentials|
-      credentials["uri"] == uri
-    end
-
     # NOTE - per Cloud Controller behavior, there should only be 1 binding,
     # hence 1 set of credentials for a service instance
-    matching_credentials.first
+    @all_repo_credentials.detect do |credentials|
+      credentials["uri"] == uri
+    end
   end
 
 
@@ -128,7 +126,7 @@ BASH
     value.nil? || value.empty?
   end
 
-  def credentials_are_valid?(credentials)
+  def credentials_are_present?(credentials)
     !(blank?(credentials["name"]) ||
         blank?(credentials["uri"]) ||
         blank?(credentials["ssh_url"]) ||

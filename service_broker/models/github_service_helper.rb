@@ -16,7 +16,7 @@ class GithubServiceHelper
     @password = password
   end
 
-  def create_repo(name)
+  def create_github_repo(name)
     begin
       response = octokit_client.create_repository(name, auto_init: true)
     rescue Octokit::Error => e
@@ -31,6 +31,16 @@ class GithubServiceHelper
     end
 
     repo_https_url(response.full_name)
+  end
+
+  def delete_github_repo(name)
+    begin
+      octokit_client.delete_repository(full_repo_name(name))
+    rescue Octokit::Error => e
+      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
+    rescue Faraday::Error::TimeoutError
+      raise GithubServiceHelper::GithubUnreachableError
+    end
   end
 
   def create_github_deploy_key(options)
@@ -61,7 +71,7 @@ class GithubServiceHelper
     deploy_key_title = options.fetch(:deploy_key_title)
 
     deploy_key_list = get_deploy_keys(full_repo_name)
-    deploy_key = deploy_key_list.select { |key| key.title == deploy_key_title}.first
+    deploy_key = deploy_key_list.detect { |key| key.title == deploy_key_title }
 
     return false if deploy_key.nil?
     remove_deploy_key(full_repo_name, deploy_key.id)

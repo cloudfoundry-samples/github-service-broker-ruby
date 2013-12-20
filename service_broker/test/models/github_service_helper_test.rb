@@ -32,13 +32,13 @@ describe GithubServiceHelper do
         )
       end
 
-      it "makes request to github" do
-        GithubServiceHelper.new('octocat', 'github-password').create_repo(@repo_name)
+      it "makes a request to github" do
+        GithubServiceHelper.new('octocat', 'github-password').create_github_repo(@repo_name)
         assert_requested @expected_request
       end
 
       it "returns a repo url" do
-        response = GithubServiceHelper.new('octocat', 'github-password').create_repo(@repo_name)
+        response = GithubServiceHelper.new('octocat', 'github-password').create_github_repo(@repo_name)
         response.must_equal "https://github.com/octocat/#{@repo_name}"
       end
     end
@@ -57,7 +57,7 @@ describe GithubServiceHelper do
 
       it "raises RepoAlreadyExistsError" do
         proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+          GithubServiceHelper.new('octocat', 'github-password').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::RepoAlreadyExistsError
       end
     end
@@ -78,7 +78,7 @@ describe GithubServiceHelper do
 
       it "raises CreateRepoError with a message" do
         expected_exception = proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+          GithubServiceHelper.new('octocat', 'github-password').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
@@ -102,7 +102,7 @@ describe GithubServiceHelper do
 
       it "raises CreateRepoError with a message" do
         expected_exception = proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+          GithubServiceHelper.new('octocat', 'github-password').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::GithubError
 
         expected_exception.message.must_match /GitHub returned an error/
@@ -119,7 +119,7 @@ describe GithubServiceHelper do
 
       it "raises GitHubUnreachableError" do
         proc {
-          GithubServiceHelper.new('octocat', 'github-password').create_repo("Hello-World")
+          GithubServiceHelper.new('octocat', 'github-password').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::GithubUnreachableError
       end
     end
@@ -366,7 +366,7 @@ describe GithubServiceHelper do
                         headers: {
                             "content-type" => "application/json; charset=utf-8"
                         },
-                        body: File.read("test/fixtures/create_github_deploy_key_failure.json"))
+                        body: File.read("test/fixtures/github_general_error_response.json"))
         end
 
         it "raises a GithubError" do
@@ -376,7 +376,7 @@ describe GithubServiceHelper do
           }.must_raise GithubServiceHelper::GithubError
 
           expected_exception.message.must_match /GitHub returned an error/
-          expected_exception.message.must_match /key is invalid. Ensure you've copied the file correctly/
+          expected_exception.message.must_match /some error message/
         end
       end
 
@@ -401,6 +401,81 @@ describe GithubServiceHelper do
         result = GithubServiceHelper.new('octocat', 'github-password').
             remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: "does-not-exist")
         assert_equal false, result
+      end
+    end
+  end
+
+  describe "#delete_repo" do
+    before do
+      @repo_name = "whatever-repo"
+      @expected_request = stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}")
+    end
+
+    it "makes a repo deletion request to github" do
+      GithubServiceHelper.new('octocat', 'github-password').delete_github_repo(@repo_name)
+      assert_requested @expected_request
+    end
+
+    describe "when deletion succeeds" do
+      before do
+        stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}").
+            to_return(status: 204)
+      end
+
+      it "returns true" do
+        result = GithubServiceHelper.new('octocat', 'github-password').delete_github_repo(@repo_name)
+        assert_equal true, result
+      end
+    end
+
+    describe "when the repo does not exist" do
+      before do
+        stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/repo-that-does-not-exist").
+            to_return(status: 404,
+                      headers: {
+                          "content-type" => "application/json; charset=utf-8"
+                      },
+                      body: File.read("test/fixtures/github_resource_not_found_response.json"))
+      end
+
+      it "returns false" do
+        result = GithubServiceHelper.new('octocat', 'github-password').delete_github_repo("repo-that-does-not-exist")
+        assert_equal false, result
+      end
+    end
+
+    describe "when GitHub returns an error" do
+      before do
+        stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}").
+            to_return(status: 422,
+                      headers: {
+                          "content-type" => "application/json; charset=utf-8"
+                      },
+                      body: File.read("test/fixtures/github_general_error_response.json"))
+      end
+
+      it "raises a GithubError" do
+        expected_exception = proc {
+          GithubServiceHelper.new('octocat', 'github-password').delete_github_repo(@repo_name)
+        }.must_raise GithubServiceHelper::GithubError
+
+        expected_exception.message.must_match /GitHub returned an error/
+        expected_exception.message.must_match /some error message/
+      end
+    end
+
+    describe "when GitHub is not reachable" do
+      before do
+        stub_deploy_key_list_request(@repo_name)
+
+        stub_request(:delete, "https://octocat:github-password@api.github.com/repos/octocat/#{@repo_name}").
+            to_timeout
+      end
+
+      it "raises a GithubUnreachableError" do
+        proc {
+          GithubServiceHelper.new('octocat', 'github-password').delete_github_repo(@repo_name)
+        }.must_raise GithubServiceHelper::GithubUnreachableError
       end
     end
   end
