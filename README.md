@@ -10,14 +10,23 @@ github-service-broker-ruby
 
 ## Introduction
 
-A Service Broker is required to integrate any service as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed) on a Cloud Foundry instance. (For brevity, we'll refer to such an instance simply as "Cloud Foundry".)
+A Service Broker is required to integrate any service with a Cloud Foundry instance (for brevity, we'll refer to such an instance simply as "Cloud Foundry") as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed).
 
-This sample Service Broker is written in ruby, and can be used as a basis for writing broker for any other services.
+This repo contains a service broker written as standalone ruby application (based on [Sinatra](https://github.com/sinatra/sinatra)) that implements the [v2.0 Service Broker API (aka Services API, or Broker API)](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html).
 
-This example is a standalone ruby application (based on [Sinatra](https://github.com/sinatra/sinatra)) that implements the [v2.0 Service Broker API (also known as the Services API)](http://docs.cloudfoundry.com/docs/running/architecture/services/writing-service.html).
+Generally, a Service Broker can be a standalone application that communicates with one or more services, or can be implemented as a component of a service itself. I.e. if the service itself is a Ruby on Rails application, the code in this repository could be added into the application (either copied in, or added as a Rails engine).
 
-Generally, a Service Broker can either be a standalone application that communicates with a service that it administers, or a Service Broker can be implemented as a component of a service. I.e. if the service itself is a Ruby on Rails application, the code in this repository can be added into the application (either copied in, or added as a Rails engine).
+This Service Broker is intended to provide a simple yet functional, readable example of how Cloud Foundry service brokers operate. Even if you are developing a broker in another language, this should clearly demonstrate the API endpoints you will need to implement. This broker is not meant as an example of best practices for ruby software design (the entire broker is intentionally one file for readability) nor does it demonstrate BOSH packaging; for an example of these concepts see [cf-mysql-release](https://github.com/cloudfoundry/cf-mysql-release). 
 
+## Repo Contents
+
+This repo contains two applications, a service broker and a test app which can be used with service instances created by the service the broker advertises. The root directory for the service broker application can be found at `github-service-broker-ruby/service_broker`.
+
+The service broker has been written to be as simple to read as possible. There are three files of note:
+
+* service_broker_app.rb - This is the service broker.
+* models/github_service_helper.rb - This is how the broker interfaces with Github.
+* config/settings.yml - The config file contains the service catalog advertised by the broker, credentials used by Cloud Foundry to authenticate with the broker, and credentials used by the broker to authenticate with Github. 
 
 ## The GitHub repo service
 
