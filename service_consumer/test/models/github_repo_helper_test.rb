@@ -52,7 +52,7 @@ describe GithubRepoHelper do
 
           proc {
             @github_repo_helper.create_commit(@repo_uri)
-          }.must_raise GithubRepoHelper::RepoCredentialsInvalidError
+          }.must_raise GithubRepoHelper::RepoCredentialsMissingError
         end
       end
     end

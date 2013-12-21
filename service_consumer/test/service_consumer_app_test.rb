@@ -289,9 +289,9 @@ JSON
       end
     end
 
-    describe "because the repo credentials are invalid" do
+    describe "because the repo credentials are missing" do
       before do
-        GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsInvalidError)
+        GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsMissingError)
       end
 
       it "redirects to the index page with the error message in the flash" do

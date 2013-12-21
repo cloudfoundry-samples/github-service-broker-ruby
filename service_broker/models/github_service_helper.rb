@@ -6,6 +6,8 @@ class GithubServiceHelper
   end
   class BindingAlreadyExistsError < StandardError
   end
+  class GithubResourceNotFoundError < StandardError
+  end
   class GithubUnreachableError < StandardError
   end
   class GithubError < StandardError
@@ -79,6 +81,18 @@ class GithubServiceHelper
 
   private
 
+  def get_deploy_keys(full_repo_name)
+    begin
+      octokit_client.list_deploy_keys(full_repo_name)
+    rescue Octokit::NotFound
+      raise GithubServiceHelper::GithubResourceNotFoundError
+    rescue Octokit::Error => e
+      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
+    rescue Faraday::Error::TimeoutError
+      raise GithubServiceHelper::GithubUnreachableError
+    end
+  end
+
   def add_deploy_key(deploy_key_title, full_repo_name, public_key)
     begin
       octokit_client.add_deploy_key(full_repo_name, deploy_key_title, public_key)
@@ -97,17 +111,6 @@ class GithubServiceHelper
     rescue Faraday::Error::TimeoutError
       raise GithubServiceHelper::GithubUnreachableError
     end
-  end
-
-  def get_deploy_keys(full_repo_name)
-    begin
-      deploy_key_list = octokit_client.list_deploy_keys(full_repo_name)
-    rescue Octokit::Error => e
-      raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
-    rescue Faraday::Error::TimeoutError
-      raise GithubServiceHelper::GithubUnreachableError
-    end
-    deploy_key_list
   end
 
   def full_repo_name(repo_name)

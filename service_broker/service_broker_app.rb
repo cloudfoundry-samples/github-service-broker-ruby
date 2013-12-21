@@ -49,6 +49,9 @@ class ServiceBrokerApp < Sinatra::Base
       credentials = github_service.create_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
       status 201
       {"credentials" => credentials}.to_json
+    rescue GithubServiceHelper::GithubResourceNotFoundError
+      status 404
+      {"description" => "GitHub resource not found"}.to_json
     rescue GithubServiceHelper::BindingAlreadyExistsError
       status 409
       {"description" => "The binding #{id} already exists"}.to_json
@@ -71,6 +74,9 @@ class ServiceBrokerApp < Sinatra::Base
       else
         status 410
       end
+      {}.to_json
+    rescue GithubServiceHelper::GithubResourceNotFoundError
+      status 410
       {}.to_json
     rescue GithubServiceHelper::GithubUnreachableError
       status 504

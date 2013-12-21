@@ -243,7 +243,8 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when binding succeeds" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).returns(
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).
+            returns(
             {
                 uri: "http://fake.github.com/some-user/some-repo",
                 private_key: "private-key"
@@ -269,7 +270,8 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when the binding with the id already exists" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).raises GithubServiceHelper::BindingAlreadyExistsError
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).
+            raises GithubServiceHelper::BindingAlreadyExistsError
         make_request
       end
 
@@ -286,9 +288,30 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
       end
     end
 
+    describe "when GitHub resource is not found" do
+      before do
+        @fake_github_service.expects(:create_github_deploy_key).
+            raises GithubServiceHelper::GithubResourceNotFoundError
+        make_request
+      end
+
+      it "returns 404 Not Found" do
+        assert_equal 404, last_response.status
+      end
+
+      it "returns a JSON response explaining the error" do
+        expected_json = {
+            "description" => "GitHub resource not found"
+        }.to_json
+
+        assert_equal expected_json, last_response.body
+      end
+    end
+
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).raises GithubServiceHelper::GithubUnreachableError
+        @fake_github_service.expects(:create_github_deploy_key).
+            raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
 
@@ -327,7 +350,6 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 end
 
 describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
-
   before do
     @instance_id = "1234"
     @binding_id = "5556"
@@ -397,6 +419,25 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
           @fake_github_service.expects(:remove_github_deploy_key).
               with(repo_name: @instance_id, deploy_key_title: @binding_id).
               returns(false)
+
+          make_request
+        end
+
+        it "returns a 410 Not found" do
+          assert_equal 410, last_response.status
+        end
+
+        it "returns an empty JSON body" do
+          make_request
+          last_response.body.must_equal("{}")
+        end
+      end
+
+      describe "because GitHub resource is not found" do
+        before do
+          @fake_github_service.expects(:remove_github_deploy_key).
+              with(repo_name: @instance_id, deploy_key_title: @binding_id).
+              raises(GithubServiceHelper::GithubResourceNotFoundError)
 
           make_request
         end
