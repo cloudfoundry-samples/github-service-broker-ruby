@@ -8,6 +8,8 @@ catalog:
       name: github-repo
       description: Provides read and write access to a GitHub repository.
       bindable: true
+      tags:
+        - github
       plans: # a service has one or more plans
         - id: c05855e7-a55d-4ba1-b462-7579df7514f4
           name: public
