@@ -1,8 +1,6 @@
 class GithubRepoHelper
   class CreateCommitError < StandardError
   end
-  class RepoUriNotFoundError < StandardError
-  end
   class RepoCredentialsMissingError < StandardError
   end
 
@@ -12,8 +10,9 @@ class GithubRepoHelper
 
   def create_commit(repo_uri)
     repo_credentials = credentials_for_repo_uri(repo_uri)
-    raise RepoUriNotFoundError if repo_credentials.nil?
-    raise RepoCredentialsMissingError unless credentials_are_present?(repo_credentials)
+    if repo_credentials.nil? || !credentials_are_present?(repo_credentials)
+      raise RepoCredentialsMissingError
+    end
 
     create_and_push_result = shell_create_and_push_commit(repo_credentials)
 

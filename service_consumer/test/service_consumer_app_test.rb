@@ -275,20 +275,6 @@ JSON
   end
 
   describe "when creating the commit fails" do
-    describe "because the repo URI is not found" do
-      before do
-        GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::RepoUriNotFoundError)
-      end
-
-      it "redirects to the index page with the error message in the flash" do
-        make_request
-
-        follow_redirect!
-        flash.wont_be_nil
-        assert last_response.body.must_include "Unable to create the commit, repo not found: #{@repo_uri}"
-      end
-    end
-
     describe "because the repo credentials are missing" do
       before do
         GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsMissingError)
@@ -299,7 +285,7 @@ JSON
 
         follow_redirect!
         flash.wont_be_nil
-        assert last_response.body.must_include "Unable to create the commit, repo credentials in VCAP_SERVICES are invalid for: #{@repo_uri}"
+        assert last_response.body.must_include "Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{@repo_uri}"
       end
     end
 

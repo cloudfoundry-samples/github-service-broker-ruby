@@ -22,22 +22,21 @@ describe GithubRepoHelper do
                   "ssh_url" => "dont-care",
                   "private_key" => "dont-care"
               }
-
           ]
 
       @github_repo_helper = GithubRepoHelper.new(@all_repo_credentials)
       @github_repo_helper.stubs(:shell_create_and_push_commit)
     end
 
-    describe "when the provided repo uri is not present in the list of credentials" do
+    describe "when no repo credentials for the uri exist" do
       it "raises an error" do
         proc {
           @github_repo_helper.create_commit("http://uri-not-present-in-list-of-credentials")
-        }.must_raise GithubRepoHelper::RepoUriNotFoundError
+        }.must_raise GithubRepoHelper::RepoCredentialsMissingError
       end
     end
 
-    describe "when the provided repo uri is present in the list of credentials" do
+    describe "when the repo credentials for the uri are found" do
       it "creates and pushes the commit to GitHub" do
         @github_repo_helper.expects(:shell_create_and_push_commit).with(@desired_repo_credentials).returns({command_status: 0, command_output: "all is well"})
 
@@ -45,8 +44,8 @@ describe GithubRepoHelper do
       end
     end
 
-    describe "when the repo credentials are not valid" do
-      %w|name ssh_url private_key|.each do |key|
+    describe "when any of the fields inside the repo credentials for the uri are missing" do
+      %w|uri name ssh_url private_key|.each do |key|
         it "raises an error when #{key} in credentials is empty" do
           @desired_repo_credentials[key] = nil
 
