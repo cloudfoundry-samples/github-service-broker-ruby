@@ -38,8 +38,6 @@ The GitHub credentials of the GitHub account adminstrator should be specified in
 
 ## Configuring the Service Broker
 
-You should rename `settings.example.yml` to `settings.yml`. 
-
 The `settings.yml` file should contain the values for these broker configurations:
 
 1. basic auth username and password
@@ -48,7 +46,7 @@ The `settings.yml` file should contain the values for these broker configuration
 
 Make changes to this yml file to customize your service broker.
 
-# Deployment
+## Deployment
 
 This application can be deployed on any environment or hosting service.
 
@@ -59,10 +57,8 @@ For example, to deploy this broker application to Cloud Foundry
 3. clone this git repository
 4. [TODO] add the GitHub credentials for the account in which you want this service broker to provide respository services
 5. edit the Basic Auth username and password in `settings.yml`
-6. `cd` into the application root directory
-7. run `cf push` to deploy the application to Cloud Foundry
-
-
+6. `cd` into the application root directory: `github-service-broker-ruby/service_broker/`
+7. run `cf push github-broker` or `gcf push github-broker` to deploy the application to Cloud Foundry
 
 ## Adding the Service Broker
 
