@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'yaml'
-require_relative 'models/github_service_helper'
+require_relative 'github_service_helper'
 
 class ServiceBrokerApp < Sinatra::Base
   #configure the Sinatra app

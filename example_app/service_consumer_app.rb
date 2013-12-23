@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'rack-flash'
-require_relative 'models/github_repo_helper'
+require_relative 'github_repo_helper'
 
 class ServiceConsumerApp < Sinatra::Base
 

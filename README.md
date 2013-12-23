@@ -20,7 +20,7 @@ This Service Broker is intended to provide a simple yet functional, readable exa
 
 ## Repo Contents
 
-This repo contains two applications, a service broker and a test app which can be used with service instances created by the service the broker advertises. The root directory for the service broker application can be found at `github-service-broker-ruby/service_broker`.
+This repo contains two applications, a service broker and an example app which can be used with service instances created by the service the broker advertises. The root directory for the service broker application can be found at `github-service-broker-ruby/service_broker`.
 
 The service broker has been written to be as simple to read as possible. There are three files of note:
 
@@ -168,21 +168,21 @@ Multiple service brokers may be added to a Cloud Foundry, but the following cons
 - It's not possible to have multiple brokers with the same URL
 - The service id and plan ids of each service advertised by the broker must be unique across Cloud Foundry (GUIDs should be used for these fields)
 
-## The Github Consumer test application
+## The Github Consumer example application
 
-We've provided a test application you can push to Cloud Foundry, which can be bound to a service instance created from the github-repo service advertised by the service broker. The application uses credentials found in the VCAP_SERVICES environment variable to make commits to the github repo represented by the bound service instance.
+We've provided an example application you can push to Cloud Foundry, which can be bound to a service instance created from the github-repo service advertised by the service broker. The application uses credentials found in the VCAP_SERVICES environment variable to make commits to the github repo represented by the bound service instance.
 
-### Deploying github_consumer
+### Deploying the example app
 
 ```
-$ cd github-service-broker-ruby/service_consumer/
+$ cd github-service-broker-ruby/example_app/
 $ gcf push github-consumer
 $ gcf create-service github-repo public github-repo-1
 $ gcf bind-service github-consumer github-repo-1
 $ gcf restart github-consumer
 ```
 
-Point your web browser at `http://github-consumer.<your cf domain>` and you should see the test app's interface. If the app has not been bound to a service instance of the github-repo service, you will see a meaningful error. Once the app has been bound and restarted you can click a submit button to make empty commits to the repo represented by the bound service instance.
+Point your web browser at `http://github-consumer.<your cf domain>` and you should see the example app's interface. If the app has not been bound to a service instance of the github-repo service, you will see a meaningful error. Once the app has been bound and restarted you can click a submit button to make empty commits to the repo represented by the bound service instance.
 
 ## Misc
 The Cloud Foundry commands used in this document were verified using CLI tools of the following versions:

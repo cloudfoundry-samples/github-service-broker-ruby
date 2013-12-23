@@ -7,7 +7,7 @@ bundle exec rake test && \
 echo && \
 echo && \
 echo ">>> RUNNING TESTS FOR SERVICE CONSUMER" && \
-cd ../service_consumer && \
+cd ../example_app && \
 bundle install --deployment && \
 bundle exec rake test  && \
 cd ..

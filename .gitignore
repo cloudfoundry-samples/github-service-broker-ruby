@@ -2,4 +2,4 @@
 
 .idea
 /service_broker/manifest.yml
-/service_consumer/manifest.yml
+/example_app/manifest.yml
