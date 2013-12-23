@@ -45,7 +45,7 @@ end
 private
 
 def ensure_env_vars_exist
-   if [github_username, github_password, repo_name, repo_private_key].any?(&:nil?)
+   if [github_username, github_access_token, repo_name, repo_private_key].any?(&:nil?)
      raise "PLEASE DEFINE THE REQUIRED ENV VARS FOR THE INTEGRATION TEST"
    end
 end
@@ -58,8 +58,10 @@ def github_username
   ENV["GITHUB_USERNAME"]
 end
 
-def github_password
-  ENV["GITHUB_PASSWORD"]
+# You can create an access token for your integration test GitHub account by running:
+# curl -u <your-github-username> -d '{"scopes": ["repo"], "note": "integration-test-token"}' https://api.github.com/authorizations
+def github_access_token
+  ENV["GITHUB_ACCESS_TOKEN"]
 end
 
 def repo_name
@@ -83,5 +85,5 @@ def repo_fullname
 end
 
 def github_client
-  ::Octokit::Client.new(login: github_username, password: github_password)
+  ::Octokit::Client.new(access_token: github_access_token)
 end
