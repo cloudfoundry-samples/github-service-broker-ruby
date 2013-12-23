@@ -20,13 +20,13 @@ This Service Broker is intended to provide a simple yet functional, readable exa
 
 ## Repo Contents
 
-This repo contains two applications, a service broker and an example app which can be used with service instances created by the service the broker advertises. The root directory for the service broker application can be found at `github-service-broker-ruby/service_broker`.
+This repo contains two applications, a service broker and an example app which can use instances of the service advertised by the broker. The root directory for the service broker application can be found at `github-service-broker-ruby/service_broker`.
 
 The service broker has been written to be as simple to read as possible. There are three files of note:
 
 * service_broker_app.rb - This is the service broker.
-* models/github_service_helper.rb - This is how the broker interfaces with Github.
-* config/settings.yml - The config file contains the service catalog advertised by the broker, credentials used by Cloud Foundry to authenticate with the broker, and credentials used by the broker to authenticate with Github. 
+* github_service_helper.rb - This is how the broker interfaces with GitHub.
+* config/settings.yml - The config file contains the service catalog advertised by the broker, credentials used by Cloud Foundry to authenticate with the broker, and credentials used by the broker to authenticate with GitHub. 
 
 ## The GitHub repo service
 
@@ -37,7 +37,7 @@ The Service Broker provides 5 basic functions:
 Function | Resulting action |
 -------- | :--------------- |
 catalog | advertises the GitHub repo services and the plans offered.
-create | creates a ([TODO]public/private) repository inside the account. This repository can be thought of as a service instance.
+create | creates a public repository inside the account. This repository can be thought of as a service instance.
 bind | generates a GitHub deploy key which gives write access to the repository, and makes the key and repository URL available to the application bound to the service instance.
 unbind | destroys the deploy key bound to the service instance.
 delete | deletes the service instance (repository).
@@ -57,7 +57,7 @@ Make changes to this yml file to customize your service broker.
 
 ## Deployment
 
-This application can be deployed on any environment or hosting service.
+This service broker application can be deployed on any environment or hosting service.
 
 For example, to deploy this broker application to Cloud Foundry
 
@@ -170,7 +170,7 @@ Multiple service brokers may be added to a Cloud Foundry, but the following cons
 
 ## The Github Consumer example application
 
-We've provided an example application you can push to Cloud Foundry, which can be bound to a service instance created from the github-repo service advertised by the service broker. The application uses credentials found in the VCAP_SERVICES environment variable to make commits to the github repo represented by the bound service instance.
+We've provided an example application you can push to Cloud Foundry, which can be bound to an instance of the github-repo service. After binding the example application to a service instance, Cloud Foundry makes credentials available in the VCAP_SERVICES environment variable. The application can then use the credentials to make commits to the GitHub repo represented by the bound service instance.
 
 ### Deploying the example app
 
