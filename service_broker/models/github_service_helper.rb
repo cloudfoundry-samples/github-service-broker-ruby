@@ -13,9 +13,9 @@ class GithubServiceHelper
   class GithubError < StandardError
   end
 
-  def initialize(username, password)
-    @login = username
-    @password = password
+  def initialize(login, access_token)
+    @login = login
+    @access_token = access_token
   end
 
   def create_github_repo(name)
@@ -126,7 +126,7 @@ class GithubServiceHelper
   end
 
   def octokit_client
-    ::Octokit::Client.new(login: @login, password: @password)
+    ::Octokit::Client.new(access_token: @access_token)
   end
 end
 

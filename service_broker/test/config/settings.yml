@@ -15,4 +15,4 @@ catalog:
 
 github:
   username: not-used-in-tests
-  password: not-used-in-tests
+  access_token: not-used-in-tests
