@@ -16,9 +16,9 @@ catalog:
           description: All repositories are public
 
 github:
+  # We use an access token in place of username/password to access your GitHub account.
+  # To generate an access token, visit https://github.com/settings/applications and click Create New Token. Give it a name and paste the token value below. 
+  # Or run the following command and paste the value of the "token" field from the response below.
+  # curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "Github Service Broker"}' https://api.github.com/authorizations
   username: #<your-github-username>
   access_token: #<token-value>
-  # The access token is used in place of username/password to access your GitHub account.
-  # To generate the access token, run the following command,
-  # then copy the value from the "token" field in the response:
-  # curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "my fancy token"}' https://api.github.com/authorizations
