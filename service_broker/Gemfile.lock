@@ -24,6 +24,7 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rake (10.1.1)
     safe_yaml (0.9.7)
     sawyer (0.5.1)
       addressable (~> 2.3.5)
@@ -48,6 +49,7 @@ DEPENDENCIES
   octokit
   pry
   rack-test
+  rake
   sinatra
   sshkey
   webmock

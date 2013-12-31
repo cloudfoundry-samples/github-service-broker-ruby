@@ -5,6 +5,7 @@ gem 'sinatra'
 gem 'json'
 gem 'octokit'
 gem 'sshkey'
+gem 'rake'
 
 group :test do
   gem 'rack-test'
