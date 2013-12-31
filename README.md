@@ -51,7 +51,15 @@ The `settings.yml` file should contain the values for these broker configuration
 
 1. basic auth username and password
 2. service catalog description
-3. GitHub account credentials
+3. GitHub account credentials: username and access token
+
+ 
+   The access token is used in place of username/password to access the GitHub account. To generate the access token using the GitHub API, run the following command
+
+   ```
+curl -u <github-account-username> -d '{"scopes": ["repo", "delete_repo"], "note": "my fancy token"}' https://api.github.com/authorizations
+```
+
 
 Make changes to this yml file to customize your service broker.
 
