@@ -47,13 +47,16 @@ The GitHub credentials of the GitHub account adminstrator should be specified in
 
 ## Configuring the Service Broker
 
-The `settings.yml` file should contain the values for these broker configurations:
+The file `settings.yml` provides configuration for:
 
-1. basic auth username and password
-2. service catalog description
-3. GitHub account credentials
+1. Basic auth username and password used by Cloud Foundry to authenticate with the service broker
+2. Catalog of services, plans, and associated user-facing metadata
+3. GitHub account credentials used by the broker to authenticate with the Github service
 
-Make changes to this yml file to customize your service broker.
+For this service to be functional, you only need to provide your Github credentials. An access token is used in place of username and password to access your GitHub account. To generate an access token run the following command then copy the value of "token" from the response into the config file.
+```
+curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "CF Service Broker"}' https://api.github.com/authorizations
+```
 
 ## Deployment
 
