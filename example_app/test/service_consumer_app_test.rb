@@ -18,6 +18,7 @@ describe "GET /" do
   before do
     @vcap_services_value = "{}"
     ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    CF::App::Service.instance_variable_set :@services, nil
   end
 
   it "displays instructions about restarting the app" do
@@ -67,6 +68,7 @@ describe "GET /" do
       }
 JSON
       ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+      CF::App::Service.instance_variable_set :@services, nil
     end
 
     it "does not display a message saying that no instances are bound" do
@@ -101,6 +103,7 @@ describe "GET /env" do
   before do
     @vcap_services_value = "{}"
     ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    CF::App::Service.instance_variable_set :@services, nil
   end
 
   it "displays instructions for binding" do
@@ -127,7 +130,7 @@ describe "GET /env" do
 JSON
 
       ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
-
+      CF::App::Service.instance_variable_set :@services, nil
       make_request
     end
 
@@ -231,6 +234,7 @@ describe "POST /create_commit" do
 JSON
 
     ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    CF::App::Service.instance_variable_set :@services, nil
   end
 
   it "calls GithubRepoHelper#create_commit with the repo URI" do

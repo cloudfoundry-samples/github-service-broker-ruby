@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'rack-flash'
+require 'cf-app-utils'
 require_relative 'github_repo_helper'
 
 class ServiceConsumerApp < Sinatra::Base
@@ -12,9 +13,9 @@ class ServiceConsumerApp < Sinatra::Base
   #declare the routes used by the app
   get "/" do
     credentials_list = credentials_of_all_repos
-    repo_uris = credentials_list.map { |c| c["uri"]} unless credentials_list.nil?
+    repo_uris = credentials_list.map { |c| c["uri"] } if bindings_exist
 
-    erb :index, locals: { repo_uris: repo_uris, messages: messages }
+    erb :index, locals: {repo_uris: repo_uris, messages: messages}
   end
 
   get "/env" do
@@ -56,9 +57,7 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def bindings_exist
-    JSON.parse(vcap_services).keys.any? { |key|
-      key == service_name
-    }
+    !(credentials_of_all_repos.nil? || credentials_of_all_repos.empty?)
   end
 
   def no_bindings_exist_message
@@ -70,10 +69,6 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def credentials_of_all_repos
-    if bindings_exist
-      JSON.parse(vcap_services)[service_name].map do |service_instance|
-        service_instance["credentials"]
-      end
-    end
+    CF::App::Credentials.find_all_by_service_label(service_name)
   end
 end
