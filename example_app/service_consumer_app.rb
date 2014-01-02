@@ -12,8 +12,7 @@ class ServiceConsumerApp < Sinatra::Base
 
   #declare the routes used by the app
   get "/" do
-    credentials_list = credentials_of_all_repos
-    repo_uris = credentials_list.map { |c| c["uri"] } if bindings_exist
+    repo_uris = credentials_of_all_repos.map { |c| c["uri"] } if bindings_exist
 
     erb :index, locals: {repo_uris: repo_uris, messages: messages}
   end
@@ -57,7 +56,7 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def bindings_exist
-    !(credentials_of_all_repos.nil? || credentials_of_all_repos.empty?)
+    !(credentials_of_all_repos.empty?)
   end
 
   def no_bindings_exist_message
