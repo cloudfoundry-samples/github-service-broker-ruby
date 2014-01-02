@@ -1,6 +1,7 @@
 branches:
   only:
     - develop
+      master
 
 language: ruby
 rvm:
