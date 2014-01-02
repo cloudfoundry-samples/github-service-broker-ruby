@@ -59,7 +59,7 @@ def github_username
 end
 
 # You can create an access token for your integration test GitHub account by running:
-# curl -u <your-github-username> -d '{"scopes": ["repo"], "note": "integration-test-token"}' https://api.github.com/authorizations
+# curl -u <github-username-of-test-account> -d '{"scopes": ["repo"], "note": "integration-test-token"}' https://api.github.com/authorizations
 def github_access_token
   ENV["GITHUB_ACCESS_TOKEN"]
 end

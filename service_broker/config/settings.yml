@@ -1,7 +1,3 @@
-basic_auth:
-  username: admin
-  password: password
-
 catalog:
   services: # catalog must advertise at least one service
     - id: 5085f1cb-e093-4630-8795-843b76018eb8
@@ -15,6 +11,12 @@ catalog:
           name: public
           description: All repositories are public
 
+# credentials for Cloud Controller to authenticate with the broker
+basic_auth:
+  username: admin
+  password: password
+
+# credentials for broker to authenticate with the GitHub account
 github:
   username: #<your-github-username>
   access_token: #<token-value>
