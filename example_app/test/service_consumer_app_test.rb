@@ -292,7 +292,7 @@ JSON
 
       follow_redirect!
       flash.wont_be_nil
-      assert last_response.body.must_include "Successfully pushed commit to #{@repo_uri}"
+      assert last_response.body.must_include Rack::Utils.escape_html("Successfully pushed commit to #{@repo_uri}")
     end
   end
 
@@ -307,13 +307,13 @@ JSON
 
         follow_redirect!
         flash.wont_be_nil
-        assert last_response.body.must_include "Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{@repo_uri}"
+        assert last_response.body.must_include Rack::Utils.escape_html("Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{@repo_uri}")
       end
     end
 
     describe "for any other reason" do
       before do
-        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::CreateCommitError)
+        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::CreateCommitError.new("error message 1\nerror message 2"))
       end
 
       it "redirects to the index page with the error message in the flash" do
@@ -321,7 +321,7 @@ JSON
 
         follow_redirect!
         flash.wont_be_nil
-        assert last_response.body.must_include "Creating the commit failed"
+        assert last_response.body.must_include Rack::Utils.escape_html("Creating the commit failed. Log contents:\nerror message 1\nerror message 2")
       end
     end
   end

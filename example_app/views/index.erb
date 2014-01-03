@@ -3,13 +3,13 @@
         border-collapse: collapse;
     }
 
-    table, th, td {
+    table, th, td, .flash {
         border: 1px solid black;
     }
 </style>
 
 <% if flash[:notice] %>
-    <%= flash[:notice] %>
+    <pre class="flash"><%= Rack::Utils.escape_html(flash[:notice]) %></pre>
     <br/>
     <br/>
 <% end %>

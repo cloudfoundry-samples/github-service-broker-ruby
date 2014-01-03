@@ -35,8 +35,8 @@ class ServiceConsumerApp < Sinatra::Base
       flash[:notice] = "Successfully pushed commit to #{repo_uri}"
     rescue GithubRepoHelper::RepoCredentialsMissingError
       flash[:notice] = "Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{repo_uri}"
-    rescue GithubRepoHelper::CreateCommitError
-      flash[:notice] = "Creating the commit failed. Please see the logs for details."
+    rescue GithubRepoHelper::CreateCommitError => e
+      flash[:notice] = "Creating the commit failed. Log contents:\n#{e.message}"
     end
 
     redirect "/"
