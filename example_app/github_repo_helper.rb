@@ -8,13 +8,13 @@ class GithubRepoHelper
     @all_repo_credentials = all_repo_credentials
   end
 
-  def create_commit(repo_uri)
+  def create_commit(repo_uri, application_name)
     repo_credentials = credentials_for_repo_uri(repo_uri)
     if repo_credentials.nil? || !credentials_are_present?(repo_credentials)
       raise RepoCredentialsMissingError
     end
 
-    create_and_push_result = shell_create_and_push_commit(repo_credentials)
+    create_and_push_result = shell_create_and_push_commit(repo_credentials, application_name)
 
     raise CreateCommitError.new(create_and_push_result[:command_output]) unless 0 == create_and_push_result[:command_status]
   end
@@ -50,7 +50,7 @@ class GithubRepoHelper
   # }
   # command_status is 0 if all commands succeed
   # command_status is status code of the failing command if any command fails
-  def shell_create_and_push_commit(repo_credentials)
+  def shell_create_and_push_commit(repo_credentials, application_name)
     private_key = repo_credentials["private_key"]
     repo_name = repo_credentials["name"]
     repo_ssh_url = repo_credentials["ssh_url"]
@@ -88,7 +88,7 @@ BASH
 
     commands = [
         "cd /tmp; GIT_SSH=#{git_ssh_script} git clone #{repo_ssh_url} 2>&1",
-        "cd /tmp/#{repo_name} && git config user.name 'Demo App' 2>&1",
+        "cd /tmp/#{repo_name} && git config user.name '#{application_name}' 2>&1",
         "cd /tmp/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
         "cd /tmp/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",
         "cd /tmp/#{repo_name}; GIT_SSH=#{git_ssh_script} git push origin master 2>&1"

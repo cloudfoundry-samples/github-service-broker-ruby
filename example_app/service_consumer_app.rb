@@ -20,7 +20,8 @@ class ServiceConsumerApp < Sinatra::Base
   get "/env" do
     content_type "text/plain"
 
-    response_body = "VCAP_SERVICES = \n#{ENV["VCAP_SERVICES"]}"
+    response_body = "VCAP_SERVICES = \n#{vcap_services}\n\n"
+    response_body << "VCAP_APPLICATION = \n#{vcap_application}\n\n"
     response_body << messages
     response_body
   end
@@ -30,7 +31,7 @@ class ServiceConsumerApp < Sinatra::Base
     repo_uri = params[:repo_uri]
 
     begin
-      github_repo_helper.create_commit(repo_uri)
+      github_repo_helper.create_commit(repo_uri, application_name)
       flash[:notice] = "Successfully pushed commit to #{repo_uri}"
     rescue GithubRepoHelper::RepoCredentialsMissingError
       flash[:notice] = "Unable to create the commit, repo credentials in VCAP_SERVICES are missing or invalid for: #{repo_uri}"
@@ -53,6 +54,14 @@ class ServiceConsumerApp < Sinatra::Base
 
   def vcap_services
     ENV["VCAP_SERVICES"]
+  end
+
+  def vcap_application
+    ENV["VCAP_APPLICATION"]
+  end
+
+  def application_name
+    JSON.parse(vcap_application).fetch("application_name")
   end
 
   def bindings_exist

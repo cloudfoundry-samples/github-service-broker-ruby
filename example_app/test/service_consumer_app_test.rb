@@ -102,14 +102,25 @@ describe "GET /env" do
 
   before do
     @vcap_services_value = "{}"
+    @vcap_application_value = <<JSON
+      {
+        "application_name":"service-consumer-application",
+        "other":"values"
+      }
+JSON
+    ENV.stubs(:[]).with("VCAP_APPLICATION").returns(@vcap_application_value)
     ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
     CF::App::Service.instance_variable_set :@services, nil
   end
 
   it "displays instructions for binding" do
     make_request
-
     last_response.body.must_match /You haven't bound any instances of the #{service_name} service/
+  end
+
+  it "shows the value of VCAP_APPLICATION" do
+    make_request
+    last_response.body.must_include "VCAP_APPLICATION = \n#{@vcap_application_value}"
   end
 
   describe "when an instance of the service is bound to the app" do
@@ -207,6 +218,7 @@ describe "POST /create_commit" do
   end
 
   before do
+    @application_name = "service-consumer-application"
     @repo_uri = "http://fake.github.com/some-user/some-repo"
     @vcap_services_value = <<JSON
       {
@@ -233,11 +245,13 @@ describe "POST /create_commit" do
       }
 JSON
 
-    ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
-    CF::App::Service.instance_variable_set :@services, nil
-  end
+    @vcap_application_value = <<JSON
+      {
+        "application_name":"#{@application_name}",
+        "other":"values"
+      }
+JSON
 
-  it "calls GithubRepoHelper#create_commit with the repo URI" do
     all_credentials = [
         {
             "password" => "topsecret",
@@ -249,16 +263,22 @@ JSON
         }
     ]
 
-    fake_github_repo_helper = mock
-    GithubRepoHelper.expects(:new).with(all_credentials).returns(fake_github_repo_helper)
-    fake_github_repo_helper.expects(:create_commit).with(@repo_uri)
+    ENV.stubs(:[]).with("VCAP_SERVICES").returns(@vcap_services_value)
+    ENV.stubs(:[]).with("VCAP_APPLICATION").returns(@vcap_application_value)
+    CF::App::Service.instance_variable_set :@services, nil
+
+    @fake_github_repo_helper = mock
+    GithubRepoHelper.expects(:new).with(all_credentials).returns(@fake_github_repo_helper)
+    @fake_github_repo_helper.stubs(:create_commit)
+  end
+
+  it "calls GithubRepoHelper#create_commit with the repo URI and application name" do
+    @fake_github_repo_helper.expects(:create_commit).with(@repo_uri, @application_name)
 
     make_request
   end
 
   it "redirects to the index page" do
-    GithubRepoHelper.any_instance.stubs(:create_commit)
-
     make_request
 
     last_response.must_be :redirect?
@@ -268,8 +288,6 @@ JSON
 
   describe "when creating the commit succeeds" do
     it "shows a success message in the flash" do
-      GithubRepoHelper.any_instance.stubs(:create_commit)
-
       make_request
 
       follow_redirect!
@@ -281,7 +299,7 @@ JSON
   describe "when creating the commit fails" do
     describe "because the repo credentials are missing" do
       before do
-        GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsMissingError)
+        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::RepoCredentialsMissingError)
       end
 
       it "redirects to the index page with the error message in the flash" do
@@ -295,7 +313,7 @@ JSON
 
     describe "for any other reason" do
       before do
-        GithubRepoHelper.any_instance.stubs(:create_commit).raises(GithubRepoHelper::CreateCommitError)
+        @fake_github_repo_helper.stubs(:create_commit).raises(GithubRepoHelper::CreateCommitError)
       end
 
       it "redirects to the index page with the error message in the flash" do

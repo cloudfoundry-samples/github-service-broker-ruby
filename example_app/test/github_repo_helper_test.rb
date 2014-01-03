@@ -5,6 +5,7 @@ include Rack::Test::Methods
 describe GithubRepoHelper do
   describe "#create_commit" do
     before do
+      @application_name = "service-consumer-application"
       @repo_name = "some-repo"
       @repo_uri = "http://fake.github.com/some-user/#{@repo_name}"
       @desired_repo_credentials = {
@@ -31,16 +32,17 @@ describe GithubRepoHelper do
     describe "when no repo credentials for the uri exist" do
       it "raises an error" do
         proc {
-          @github_repo_helper.create_commit("http://uri-not-present-in-list-of-credentials")
+          @github_repo_helper.create_commit("http://uri-not-present-in-list-of-credentials", @application_name)
         }.must_raise GithubRepoHelper::RepoCredentialsMissingError
       end
     end
 
     describe "when the repo credentials for the uri are found" do
       it "creates and pushes the commit to GitHub" do
-        @github_repo_helper.expects(:shell_create_and_push_commit).with(@desired_repo_credentials).returns({command_status: 0, command_output: "all is well"})
+        @github_repo_helper.expects(:shell_create_and_push_commit).with(@desired_repo_credentials, @application_name).
+            returns({command_status: 0, command_output: "all is well"})
 
-        @github_repo_helper.create_commit(@repo_uri)
+        @github_repo_helper.create_commit(@repo_uri, @application_name)
       end
     end
 
@@ -50,7 +52,7 @@ describe GithubRepoHelper do
           @desired_repo_credentials[key] = nil
 
           proc {
-            @github_repo_helper.create_commit(@repo_uri)
+            @github_repo_helper.create_commit(@repo_uri, @application_name)
           }.must_raise GithubRepoHelper::RepoCredentialsMissingError
         end
       end
@@ -58,11 +60,11 @@ describe GithubRepoHelper do
 
     describe "when any shell command fails" do
       it "raises an exception with the failure log in the exception message" do
-        @github_repo_helper.expects(:shell_create_and_push_commit).with(@desired_repo_credentials).
+        @github_repo_helper.expects(:shell_create_and_push_commit).with(@desired_repo_credentials, @application_name).
             returns({command_status: 1, command_output: "some error messages"})
 
         exception = proc {
-          @github_repo_helper.create_commit(@repo_uri)
+          @github_repo_helper.create_commit(@repo_uri, @application_name)
         }.must_raise GithubRepoHelper::CreateCommitError
 
         exception.message.must_equal "some error messages"
