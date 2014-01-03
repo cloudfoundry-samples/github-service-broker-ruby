@@ -23,8 +23,7 @@ class ServiceBrokerApp < Sinatra::Base
   put "/v2/service_instances/:id" do |id|
     content_type :json
 
-    repo_name = id
-
+    repo_name = repository_name(id)
     begin
       repo_url = github_service.create_github_repo(repo_name)
       status 201
@@ -42,11 +41,11 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   # BIND
-  put '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, id|
+  put '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, binding_id|
     content_type :json
 
     begin
-      credentials = github_service.create_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
+      credentials = github_service.create_github_deploy_key(repo_name: repository_name(instance_id), deploy_key_title: binding_id)
       status 201
       {"credentials" => credentials}.to_json
     rescue GithubServiceHelper::GithubResourceNotFoundError
@@ -54,7 +53,7 @@ class ServiceBrokerApp < Sinatra::Base
       {"description" => "GitHub resource not found"}.to_json
     rescue GithubServiceHelper::BindingAlreadyExistsError
       status 409
-      {"description" => "The binding #{id} already exists"}.to_json
+      {"description" => "The binding #{binding_id} already exists"}.to_json
     rescue GithubServiceHelper::GithubUnreachableError
       status 504
       {"description" => "GitHub is not reachable"}.to_json
@@ -65,11 +64,11 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   # UNBIND
-  delete '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, id|
+  delete '/v2/service_instances/:instance_id/service_bindings/:id' do |instance_id, binding_id|
     content_type :json
 
     begin
-      if github_service.remove_github_deploy_key(repo_name: instance_id, deploy_key_title: id)
+      if github_service.remove_github_deploy_key(repo_name: repository_name(instance_id), deploy_key_title: binding_id)
         status 200
       else
         status 410
@@ -92,7 +91,7 @@ class ServiceBrokerApp < Sinatra::Base
     content_type :json
 
     begin
-      if github_service.delete_github_repo(instance_id)
+      if github_service.delete_github_repo(repository_name(instance_id))
         status 200
       else
         status 410
@@ -109,6 +108,10 @@ class ServiceBrokerApp < Sinatra::Base
 
   #helper methods
   private
+
+  def repository_name(id)
+    "github-service-#{id}"
+  end
 
   def self.app_settings
     settings_filename = defined?(SETTINGS_FILENAME) ? SETTINGS_FILENAME : 'config/settings.yml'

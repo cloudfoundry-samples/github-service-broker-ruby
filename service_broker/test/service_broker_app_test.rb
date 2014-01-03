@@ -115,10 +115,9 @@ describe "put /v2/service_instances/:id" do
 
     describe "when repo is successfully created" do
       before do
-        @fake_github_service.stubs(:create_github_repo).returns("http://some.repository.url")
+        @fake_github_service.stubs(:create_github_repo).with("github-service-1234-5678").returns("http://some.repository.url")
         make_request
       end
-
 
       it "returns '201 Created'" do
         assert_equal 201, last_response.status
@@ -139,7 +138,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when the repo already exists" do
       before do
-        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::RepoAlreadyExistsError
+        @fake_github_service.stubs(:create_github_repo).with("github-service-1234-5678").raises GithubServiceHelper::RepoAlreadyExistsError
         make_request
       end
 
@@ -149,7 +148,7 @@ describe "put /v2/service_instances/:id" do
 
       it "returns a JSON response explaining the error" do
         expected_json = {
-            "description" => "The repo #{@id} already exists in the GitHub account"
+            "description" => "The repo github-service-#{@id} already exists in the GitHub account"
         }.to_json
 
         assert_equal expected_json, last_response.body
@@ -158,7 +157,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::GithubUnreachableError
+        @fake_github_service.stubs(:create_github_repo).with("github-service-1234-5678").raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
 
@@ -177,7 +176,7 @@ describe "put /v2/service_instances/:id" do
 
     describe "when GitHub returns any other error" do
       before do
-        @fake_github_service.stubs(:create_github_repo).raises GithubServiceHelper::GithubError.new("some message")
+        @fake_github_service.stubs(:create_github_repo).with("github-service-1234-5678").raises GithubServiceHelper::GithubError.new("some message")
         make_request
       end
 
@@ -243,7 +242,7 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when binding succeeds" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
             returns(
             {
                 uri: "http://fake.github.com/some-user/some-repo",
@@ -270,7 +269,7 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when the binding with the id already exists" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: @instance_id, deploy_key_title: @binding_id).
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
             raises GithubServiceHelper::BindingAlreadyExistsError
         make_request
       end
@@ -290,7 +289,7 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when GitHub resource is not found" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
             raises GithubServiceHelper::GithubResourceNotFoundError
         make_request
       end
@@ -310,7 +309,7 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when GitHub is not reachable" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
             raises GithubServiceHelper::GithubUnreachableError
         make_request
       end
@@ -330,7 +329,8 @@ describe "put /v2/service_instances/:instance_id/service_bindings/:id" do
 
     describe "when GitHub returns any other error" do
       before do
-        @fake_github_service.expects(:create_github_deploy_key).raises GithubServiceHelper::GithubError.new("some message")
+        @fake_github_service.expects(:create_github_deploy_key).with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
+            raises GithubServiceHelper::GithubError.new("some message")
         make_request
       end
 
@@ -397,7 +397,7 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
     describe "when unbinding succeeds" do
       before do
         @fake_github_service.expects(:remove_github_deploy_key).
-            with(repo_name: @instance_id, deploy_key_title: @binding_id).
+            with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
             returns(true)
 
         make_request
@@ -417,7 +417,7 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
       describe "because binding id not found" do
         before do
           @fake_github_service.expects(:remove_github_deploy_key).
-              with(repo_name: @instance_id, deploy_key_title: @binding_id).
+              with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
               returns(false)
 
           make_request
@@ -436,7 +436,7 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
       describe "because GitHub resource is not found" do
         before do
           @fake_github_service.expects(:remove_github_deploy_key).
-              with(repo_name: @instance_id, deploy_key_title: @binding_id).
+              with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
               raises(GithubServiceHelper::GithubResourceNotFoundError)
 
           make_request
@@ -455,7 +455,7 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
       describe "because GitHub is not reachable" do
         before do
           @fake_github_service.expects(:remove_github_deploy_key).
-              with(repo_name: @instance_id, deploy_key_title: @binding_id).
+              with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
               raises GithubServiceHelper::GithubUnreachableError
           make_request
         end
@@ -476,7 +476,7 @@ describe "delete /v2/service_instances/:instance_id/service_bindings/:id" do
       describe "because GitHub returns any other error" do
         before do
           @fake_github_service.expects(:remove_github_deploy_key).
-              with(repo_name: @instance_id, deploy_key_title: @binding_id).
+              with(repo_name: "github-service-#{@instance_id}", deploy_key_title: @binding_id).
               raises GithubServiceHelper::GithubError.new("some message")
           make_request
         end
@@ -537,7 +537,8 @@ describe "delete /v2/service_instances/:instance_id" do
 
     describe "when repo is successfully deleted" do
       before do
-        @fake_github_service.stubs(:delete_github_repo).returns(true)
+        @fake_github_service.stubs(:delete_github_repo).with("github-service-#{@instance_id}").
+            returns(true)
         make_request
       end
 
@@ -557,8 +558,8 @@ describe "delete /v2/service_instances/:instance_id" do
     describe "when repo deletion fails" do
       describe "because the specified repo is not found" do
         before do
-          @fake_github_service.expects(:delete_github_repo).with(@instance_id).returns(false)
-
+          @fake_github_service.stubs(:delete_github_repo).with("github-service-#{@instance_id}").
+              returns(false)
           make_request
         end
 
@@ -573,7 +574,8 @@ describe "delete /v2/service_instances/:instance_id" do
 
       describe "because GitHub is not reachable" do
         before do
-          @fake_github_service.stubs(:delete_github_repo).raises GithubServiceHelper::GithubUnreachableError
+          @fake_github_service.stubs(:delete_github_repo).with("github-service-#{@instance_id}").
+              raises GithubServiceHelper::GithubUnreachableError
           make_request
         end
 
@@ -592,7 +594,8 @@ describe "delete /v2/service_instances/:instance_id" do
 
       describe "because GitHub returns any other error" do
         before do
-          @fake_github_service.stubs(:delete_github_repo).raises GithubServiceHelper::GithubError.new("some message")
+          @fake_github_service.stubs(:delete_github_repo).with("github-service-#{@instance_id}").
+              raises GithubServiceHelper::GithubError.new("some message")
           make_request
         end
 
