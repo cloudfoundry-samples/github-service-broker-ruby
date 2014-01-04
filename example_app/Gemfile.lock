@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/khwang1/cf-app-utils-ruby.git
-  revision: e76e940ecfc63b3352025ea748b02d23d2f58406
+  remote: https://github.com/cloudfoundry/cf-app-utils-ruby
+  revision: 8c4a80f1bfebe6dd9297fcba35e60232ad82847f
   specs:
     cf-app-utils (0.2)
 
