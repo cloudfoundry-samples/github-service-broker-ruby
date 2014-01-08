@@ -160,7 +160,7 @@ github-repo   n/a       n/a        public   Provides read and write access to a 
 
 ### Making the Service Plans Public
 
-Please refer to the "Making a Plan Public" section of [Managing Service Brokers](http://docs.cloudfoundry.com/docs/running/architecture/services/managing-service-brokers.html#make-plan-public) on instructions for how to make plans public.
+Please refer to the "Making a Plan Public" section of [Managing Service Brokers](http://docs.cloudfoundry.com/docs/running/architecture/services/managing-service-brokers.html#make-plan-public) for instructions on making plans public.
 
 
 ### Adding multiple service brokers
