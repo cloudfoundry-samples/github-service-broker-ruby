@@ -8,7 +8,7 @@ catalog:
         - github
       metadata:
         displayName: GitHub Repo
-        imageUrl: https://github.global.ssl.fastly.net/images/modules/logos_page/Octocat.png
+        imageUrl: https://raw2.github.com/github/media/master/octocats/blacktocat-32.png
         longDescription: The service creates repos under the configured GitHub organization. Binding an app creates a deploy key for the repo that the example app uses to make commits to the repo.
         providerDisplayName: GitHub
         documentationUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
