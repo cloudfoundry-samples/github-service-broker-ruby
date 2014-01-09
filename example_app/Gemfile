@@ -3,7 +3,7 @@ ruby "2.0.0"
 
 gem 'sinatra'
 gem 'rack-flash3'
-gem 'cf-app-utils', git: "https://github.com/cloudfoundry/cf-app-utils-ruby"
+gem 'cf-app-utils'
 gem 'rake'
 
 group :test do
