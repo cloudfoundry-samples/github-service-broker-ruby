@@ -6,10 +6,25 @@ catalog:
       bindable: true
       tags:
         - github
+      metadata:
+        displayName: GitHub Repo
+        imageUrl: https://github.global.ssl.fastly.net/images/modules/logos_page/Octocat.png
+        longDescription: The service creates repos under the configured GitHub organization. Binding an app creates a deploy key for the repo that the example app uses to make commits to the repo.
+        providerDisplayName: GitHub
+        documentationUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
+        supportUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
       plans: # a service has one or more plans
         - id: c05855e7-a55d-4ba1-b462-7579df7514f4
           name: public
           description: All repositories are public
+          metadata:
+            bullets:
+              - Repos are public
+            costs:
+              - amount:
+                  usd: 0.0
+                unit: MONTHLY
+            displayName: Public
 
 # credentials for Cloud Controller to authenticate with the broker
 basic_auth:

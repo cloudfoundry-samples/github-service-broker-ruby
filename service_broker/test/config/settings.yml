@@ -1,7 +1,3 @@
-basic_auth:
-  username: admin
-  password: password
-
 catalog:
   services: # catalog must advertise at least one service
     - id: 5085f1cb-e093-4630-8795-843b76018eb8
@@ -10,11 +6,36 @@ catalog:
       bindable: true
       tags:
         - github
+      metadata:
+        displayName: GitHub Repo
+        imageUrl: https://github.global.ssl.fastly.net/images/modules/logos_page/Octocat.png
+        longDescription: The service creates repos under the configured GitHub organization. Binding an app creates a deploy key for the repo that the example app uses to make commits to the repo.
+        providerDisplayName: GitHub
+        documentationUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
+        supportUrl: https://github.com/cloudfoundry-samples/github-service-broker-ruby
       plans: # a service has one or more plans
         - id: c05855e7-a55d-4ba1-b462-7579df7514f4
           name: public
           description: All repositories are public
+          metadata:
+            bullets:
+              - Repos are public
+            costs:
+              - amount:
+                  usd: 0.0
+                unit: MONTHLY
+            displayName: Public
 
+# credentials for Cloud Controller to authenticate with the broker
+basic_auth:
+  username: admin
+  password: password
+
+# credentials for broker to authenticate with the GitHub account
 github:
   username: not-used-in-tests
   access_token: not-used-in-tests
+  # The access token is used in place of username/password to access your GitHub account.
+  # To generate the access token, run the following command,
+  # then copy the value from the "token" field in the response:
+  # curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "my fancy token"}' https://api.github.com/authorizations

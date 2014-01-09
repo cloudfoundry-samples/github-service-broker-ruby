@@ -65,10 +65,31 @@ describe "get /v2/catalog" do
         plans = service["plans"]
         assert plans.length > 0
         plans.each do |plan|
-          plan.keys.length.must_equal 3
+          assert_operator plan.keys.length, :>=, 3
           assert plan.keys.include? "id"
           assert plan.keys.include? "name"
           assert plan.keys.include? "description"
+        end
+      end
+    end
+
+    it "contains proper metadata when it is (optionally) provided in settings.yml" do
+      response_json = JSON.parse last_response.body
+
+      services = response_json["services"]
+
+      services.each do |service|
+        assert service.keys.include? "metadata"
+
+        plans = service["plans"]
+        plans.each do |plan|
+          assert plan.keys.include? "metadata"
+          plan_costs = plan["metadata"]["costs"]
+          plan_costs.each do |cost|
+            assert cost.keys.include? "amount"
+            assert cost.keys.include? "unit"
+            assert cost["amount"].keys.include? "usd"
+          end
         end
       end
     end
