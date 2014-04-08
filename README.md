@@ -74,7 +74,7 @@ For example, to deploy this broker application to Cloud Foundry
 6. `cd` into the application root directory: `github-service-broker-ruby/service_broker/`
 7. run `cf push github-broker` or `gcf push github-broker` to deploy the application to Cloud Foundry
 8. register the service broker with CF (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#register-broker))
-9. make the service plan public (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#make-plans-public))
+9. make the service plan public (instructions [here](http://docs.cloudfoundry.org/services/access-control.html#make-plans-public))
 
 
 ## The GitHub Service Consumer example application
