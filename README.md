@@ -10,9 +10,9 @@ github-service-broker-ruby
 
 ## Introduction
 
-A Service Broker is required to integrate any service with a Cloud Foundry instance (for brevity, we'll refer to such an instance simply as "Cloud Foundry") as a [Managed Service](http://docs.cloudfoundry.com/docs/running/architecture/services/#managed).
+A Service Broker is required to integrate any service with a Cloud Foundry instance (for brevity, we'll refer to such an instance simply as "Cloud Foundry") as a [Managed Service](http://docs.cloudfoundry.org/devguide/services/managed.html).
 
-This repo contains a service broker written as standalone ruby application (based on [Sinatra](https://github.com/sinatra/sinatra)) that implements the [v2.0 Service Broker API (aka Services API, or Broker API)](http://docs.cloudfoundry.com/docs/running/architecture/services/api-v2.0.html).
+This repo contains a service broker written as standalone ruby application (based on [Sinatra](https://github.com/sinatra/sinatra)) that implements the [v2.0 Service Broker API (aka Services API, or Broker API)](http://docs.cloudfoundry.org/services/api.html).
 
 Generally, a Service Broker can be a standalone application that communicates with one or more services, or can be implemented as a component of a service itself. I.e. if the service itself is a Ruby on Rails application, the code in this repository could be added into the application (either copied in, or added as a Rails engine).
 
@@ -32,7 +32,7 @@ The service broker has been written to be as simple to read as possible. There a
 
 In this example, the service provided is the management of repositories inside a single GitHub account owned by the service administrator.
 
-The Service Broker provides 5 basic functions (see general description in the [API documentation](http://docs.cloudfoundry.com/docs/running/architecture/services/api.html#api-overview)):
+The Service Broker provides 5 basic functions (see general description in the [API documentation](http://docs.cloudfoundry.org/services/api.html)):
 
 Function | Resulting action |
 -------- | :--------------- |
@@ -73,8 +73,8 @@ For example, to deploy this broker application to Cloud Foundry
 5. edit the Basic Auth username and password in `settings.yml`
 6. `cd` into the application root directory: `github-service-broker-ruby/service_broker/`
 7. run `cf push github-broker` or `gcf push github-broker` to deploy the application to Cloud Foundry
-8. register the service broker with CF (instructions [here](http://docs.cloudfoundry.com/docs/running/architecture/services/managing-service-brokers.html#add-broker))
-9. make the service plan public (instructions [here](http://docs.cloudfoundry.com/docs/running/architecture/services/managing-service-brokers.html#make-plans-public))
+8. register the service broker with CF (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#register-broker))
+9. make the service plan public (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#make-plans-public))
 
 
 ## The GitHub Service Consumer example application
