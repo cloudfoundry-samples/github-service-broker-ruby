@@ -1,12 +1,13 @@
 branches:
   only:
-    - develop
-    - master
-
+  - develop
+  - master
 language: ruby
 rvm:
-  - 2.0.0
-
+- 2.0.0
 before_script:
-  - chmod +x ci.sh
+- chmod +x ci.sh
 script: ./ci.sh
+env:
+  global:
+    secure: UwZfR1zlq+42af+6PACVJ+e9qcaHo2ibXiEbFQHQXkCj9cG0DLmdJ6LrhZ9WO0Za/HlB5Lv9988xWV/VGkH10K3n1e59xzEggDYCLpaR3L+YsPHbvX6q9GHKowePo+eztmwI5Vx65zHMMM+9G2mwzzyQBt3yOIG/k90+dUbGtPs=

@@ -8,6 +8,7 @@ gem 'sshkey'
 gem 'rake'
 
 group :test do
+  gem 'codeclimate-test-reporter', require: nil
   gem 'rack-test'
   gem 'mocha', require: false
   gem 'webmock'
