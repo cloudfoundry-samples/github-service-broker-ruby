@@ -38,3 +38,4 @@ github:
   # curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "CF Service Broker"}' https://api.github.com/authorizations
   username: #<your-github-username>
   access_token: #<token-value>
+  ssh: true
