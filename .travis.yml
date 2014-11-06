@@ -2,6 +2,7 @@ branches:
   only:
   - develop
   - master
+  - wip-81196682
 language: ruby
 rvm:
 - 2.0.0
