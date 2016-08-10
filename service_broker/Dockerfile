@@ -3,5 +3,5 @@ RUN mkdir /sb
 COPY . /sb
 WORKDIR /sb
 RUN bundle install
-EXPOSE 8080
+EXPOSE 9292
 CMD rackup
