@@ -7,6 +7,8 @@ github-service-broker-ruby
 
 [![Build Status](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby.png?branch=master)](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby) (master)
 
+[![Docker Repository on Quay](https://quay.io/repository/deis/cloudfoundry-github-service-broker/status "Docker Repository on Quay")](https://quay.io/repository/deis/cloudfoundry-github-service-broker)
+
 
 ## Introduction
 
