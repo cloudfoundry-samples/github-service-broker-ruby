@@ -119,8 +119,6 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   def github_service
-    gh_user = ENV["GITHUB_USER"]
-    gh_token = ENV["GITHUB_TOKEN"]
-    GithubServiceHelper.new(gh_user, gh_token)
+    GithubServiceHelper.new(ENV["GITHUB_USER"], ENV["GITHUB_TOKEN"])
   end
 end
