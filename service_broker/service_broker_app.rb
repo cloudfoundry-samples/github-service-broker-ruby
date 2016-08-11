@@ -119,7 +119,8 @@ class ServiceBrokerApp < Sinatra::Base
   end
 
   def github_service
-    github_credentials = self.class.app_settings.fetch("github")
-    GithubServiceHelper.new(github_credentials.fetch("username"), github_credentials.fetch("access_token"))
+    gh_user = ENV["GITHUB_USER"]
+    gh_token = ENV["GITHUB_TOKEN"]
+    GithubServiceHelper.new(gh_user, gh_token)
   end
 end

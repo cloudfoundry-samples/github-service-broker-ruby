@@ -30,11 +30,3 @@ catalog:
 basic_auth:
   username: admin
   password: password
-
-# credentials for broker to authenticate with the GitHub account
-github:
-  # An access token is used in place of username/password to access your GitHub account.
-  # To generate an access token run the following command then copy the value of "token" from the response.
-  # curl -u <your-github-username> -d '{"scopes": ["repo", "delete_repo"], "note": "CF Service Broker"}' https://api.github.com/authorizations
-  username: <%= ENV['GITHUB_USER_NAME'] %>
-  access_token: <%= ENV['GITHUB_TOKEN'] %>
