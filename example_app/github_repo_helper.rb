@@ -53,7 +53,7 @@ class GithubRepoHelper
   def shell_create_and_push_commit(repo_credentials, application_name)
     private_key = repo_credentials["private_key"]
     repo_name = repo_credentials["name"]
-    repo_ssh_url = repo_credentials["ssh_url"]
+    repo_url = repo_credentials["ssh"] ? repo_credentials["ssh_url"] : repo_credentials["uri"]
     keys_dir = "/tmp/github_keys"
     key_file_name = "#{keys_dir}/#{repo_name}.key"
     git_ssh_script = "/tmp/#{repo_name}_ssh_script.sh"
@@ -87,7 +87,8 @@ BASH
     end
 
     commands = [
-        "cd /tmp; GIT_SSH=#{git_ssh_script} git clone #{repo_ssh_url} 2>&1",
+        "cd /tmp; GIT_SSH=#{git_ssh_script} git clone #{repo_url} 2>&1",
+        "cd /tmp/#{repo_name} && git config user.email '#{application_name}' 2>&1",
         "cd /tmp/#{repo_name} && git config user.name '#{application_name}' 2>&1",
         "cd /tmp/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
         "cd /tmp/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",

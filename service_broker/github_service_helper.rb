@@ -13,9 +13,10 @@ class GithubServiceHelper
   class GithubError < StandardError
   end
 
-  def initialize(login, access_token)
+  def initialize(login, access_token, ssh=true)
     @login = login
     @access_token = access_token
+    @ssh = ssh
   end
 
   def create_github_repo(name)
@@ -63,7 +64,8 @@ class GithubServiceHelper
         name: repo_name,
         uri: repo_https_url(full_repo_name),
         ssh_url: repo_ssh_url(full_repo_name),
-        private_key: key_pair.private_key
+        private_key: key_pair.private_key,
+        ssh: @ssh
     }
   end
 
@@ -122,7 +124,7 @@ class GithubServiceHelper
   end
 
   def repo_https_url(full_repo_name)
-    "https://github.com/#{full_repo_name}"
+    "https://#{@login}:#{@access_token}@github.com/#{full_repo_name}"
   end
 
   def octokit_client
