@@ -66,13 +66,13 @@ This service broker application can be deployed on any environment or hosting se
 
 For example, to deploy this broker application to Cloud Foundry
 
-1. install the `cf` or `gcf` command line tool
-2. log in as a cloud controller admin using `cf login` or `gcf login`
+1. install the `cf` command line tool
+2. log in as a cloud controller admin using `cf login`
 3. fork or clone this git repository
 4. add the credentials (username and access token) for the GitHub account in which you want this service broker to provide repository services in `settings.yml`.
 5. edit the Basic Auth username and password in `settings.yml`
 6. `cd` into the application root directory: `github-service-broker-ruby/service_broker/`
-7. run `cf push github-broker` or `gcf push github-broker` to deploy the application to Cloud Foundry
+7. run `cf push github-broker` to deploy the application to Cloud Foundry
 8. register the service broker with CF (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#add-broker))
 9. make the service plan public (instructions [here](http://docs.cloudfoundry.org/services/access-control.html#enable-access))
 
@@ -93,17 +93,6 @@ $ cf create-service github-repo github-repo-1 --plan public
 $ cf bind-service github-repo-1 github-consumer
 $ cf services # can be used to verify the binding was created
 $ cf restart github-consumer
-```
-
-With `gcf`:
-
-```
-$ cd github-service-broker-ruby/example_app/
-$ gcf push github-consumer
-$ gcf create-service github-repo public github-repo-1
-$ gcf bind-service github-consumer github-repo-1
-$ gcf services # can be used to verify the binding was created
-$ gcf restart github-consumer
 ```
 
 Point your web browser at `http://github-consumer.<your cf domain>` and you should see the example app's interface. If the app has not been bound to a service instance of the github-repo service, you will see a meaningful error. Once the app has been bound and restarted you can click a submit button to make empty commits to the repo represented by the bound service instance.
