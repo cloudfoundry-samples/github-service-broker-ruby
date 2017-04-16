@@ -88,6 +88,7 @@ BASH
 
     commands = [
         "cd /tmp; GIT_SSH=#{git_ssh_script} git clone #{repo_ssh_url} 2>&1",
+        "cd /tmp/#{repo_name} && git config user.email '#{application_name}' 2>&1",
         "cd /tmp/#{repo_name} && git config user.name '#{application_name}' 2>&1",
         "cd /tmp/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
         "cd /tmp/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",
