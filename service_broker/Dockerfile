@@ -1,4 +1,4 @@
-FROM ruby:2.0.0
+FROM ruby:2.4.2
 RUN mkdir /sb
 COPY . /sb
 WORKDIR /sb
