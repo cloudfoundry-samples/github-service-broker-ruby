@@ -1,7 +1,7 @@
 github-service-broker-ruby
 ==========================
 
-##Build Status
+## Build Status
 
 [![Build Status](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby.png?branch=develop)](https://travis-ci.org/cloudfoundry-samples/github-service-broker-ruby) (develop branch)
 
@@ -16,7 +16,7 @@ This repo contains a service broker written as standalone ruby application (base
 
 Generally, a Service Broker can be a standalone application that communicates with one or more services, or can be implemented as a component of a service itself. I.e. if the service itself is a Ruby on Rails application, the code in this repository could be added into the application (either copied in, or added as a Rails engine).
 
-This Service Broker is intended to provide a simple yet functional, readable example of how Cloud Foundry service brokers operate. Even if you are developing a broker in another language, this should clearly demonstrate the API endpoints you will need to implement. This broker is not meant as an example of best practices for Ruby software design nor does it demonstrate BOSH packaging; for an example of these concepts see [cf-mysql-release](https://github.com/cloudfoundry/cf-mysql-release). 
+This Service Broker is intended to provide a simple yet functional, readable example of how Cloud Foundry service brokers operate. Even if you are developing a broker in another language, this should clearly demonstrate the API endpoints you will need to implement. This broker is not meant as an example of best practices for Ruby software design nor does it demonstrate BOSH packaging; for an example of these concepts see [cf-mysql-release](https://github.com/cloudfoundry/cf-mysql-release).
 
 ## Repo Contents
 
@@ -26,7 +26,7 @@ The service broker has been written to be as simple to read as possible. There a
 
 * service_broker_app.rb - This is the service broker.
 * github_service_helper.rb - This is how the broker interfaces with GitHub.
-* config/settings.yml - The config file contains the service catalog advertised by the broker, credentials used by Cloud Foundry to authenticate with the broker, and credentials used by the broker to authenticate with GitHub. 
+* config/settings.yml - The config file contains the service catalog advertised by the broker, credentials used by Cloud Foundry to authenticate with the broker, and credentials used by the broker to authenticate with GitHub.
 
 ## The GitHub repo service
 
@@ -66,16 +66,24 @@ This service broker application can be deployed on any environment or hosting se
 
 For example, to deploy this broker application to Cloud Foundry
 
-1. install the `cf` or `gcf` command line tool
-2. log in as a cloud controller admin using `cf login` or `gcf login`
+1. install the `cf` command line tool
+2. log in as a cloud controller admin using `cf login`
 3. fork or clone this git repository
 4. add the credentials (username and access token) for the GitHub account in which you want this service broker to provide repository services in `settings.yml`.
 5. edit the Basic Auth username and password in `settings.yml`
 6. `cd` into the application root directory: `github-service-broker-ruby/service_broker/`
-7. run `cf push github-broker` or `gcf push github-broker` to deploy the application to Cloud Foundry
+7. run `cf push github-broker` to deploy the application to Cloud Foundry
 8. register the service broker with CF (instructions [here](http://docs.cloudfoundry.org/services/managing-service-brokers.html#add-broker))
+
+  ```bash
+  $ cf create-service-broker github-repo admin password http://github-broker.<your-cf-domain>
+  ```
+
 9. make the service plan public (instructions [here](http://docs.cloudfoundry.org/services/access-control.html#enable-access))
 
+  ```bash
+  $ cf enable-service-access github-repo
+  ```
 
 ## The GitHub Service Consumer example application
 
@@ -89,24 +97,13 @@ With `cf`:
 ```
 $ cd github-service-broker-ruby/example_app/
 $ cf push github-consumer
-$ cf create-service github-repo github-repo-1 --plan public 
+$ cf create-service github-repo public github-repo-1
 $ cf bind-service github-repo-1 github-consumer
 $ cf services # can be used to verify the binding was created
 $ cf restart github-consumer
 ```
 
-With `gcf`:
-
-```
-$ cd github-service-broker-ruby/example_app/
-$ gcf push github-consumer
-$ gcf create-service github-repo public github-repo-1
-$ gcf bind-service github-consumer github-repo-1
-$ gcf services # can be used to verify the binding was created
-$ gcf restart github-consumer
-```
-
-Point your web browser at `http://github-consumer.<your cf domain>` and you should see the example app's interface. If the app has not been bound to a service instance of the github-repo service, you will see a meaningful error. Once the app has been bound and restarted you can click a submit button to make empty commits to the repo represented by the bound service instance.
+Point your web browser at `http://github-consumer.<your-cf-domain>` and you should see the example app's interface. If the app has not been bound to a service instance of the github-repo service, you will see a meaningful error. Once the app has been bound and restarted you can click a submit button to make empty commits to the repo represented by the bound service instance.
 
 ### Testing the example app
 
@@ -115,4 +112,3 @@ The integration tests verify that the application can make commits and push them
 To run the tests, you'll need to create a test account on GitHub, and store the credentials in environment variables (see `example_app/test/integration/github_integration_test.rb` for details)
 
 The integration tests can be run by `bundle exec rake integration_test`.
-
