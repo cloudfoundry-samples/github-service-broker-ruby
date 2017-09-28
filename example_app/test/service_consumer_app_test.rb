@@ -25,7 +25,7 @@ describe "GET /" do
     make_request
 
     last_response.status.must_equal 200
-    last_response.body.must_match /After binding or unbinding any service instances, restart/
+    last_response.body.must_match(/After binding or unbinding any service instances, restart/)
   end
 
   describe "when no service instances are bound to the app" do
@@ -33,7 +33,7 @@ describe "GET /" do
       make_request
 
       last_response.status.must_equal 200
-      last_response.body.must_match /You haven't bound any instances of the #{service_name} service/
+      last_response.body.must_match(/You haven't bound any instances of the #{service_name} service/)
     end
   end
 
@@ -115,7 +115,7 @@ JSON
 
   it "displays instructions for binding" do
     make_request
-    last_response.body.must_match /You haven't bound any instances of the #{service_name} service/
+    last_response.body.must_match(/You haven't bound any instances of the #{service_name} service/)
   end
 
   it "shows the value of VCAP_APPLICATION" do
@@ -189,7 +189,7 @@ JSON
     end
 
     it "displays a message saying that no instances are bound" do
-      last_response.body.must_match /You haven't bound any instances of the #{service_name} service/
+      last_response.body.must_match(/You haven't bound any instances of the #{service_name} service/)
     end
   end
 
@@ -203,7 +203,7 @@ JSON
     it "shows the value of VCAP_SERVICES" do
       make_request
 
-      last_response.body.must_match /VCAP_SERVICES = \n\{}/
+      last_response.body.must_match(/VCAP_SERVICES = \n\{}/)
     end
   end
 end

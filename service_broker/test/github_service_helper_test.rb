@@ -85,8 +85,8 @@ describe GithubServiceHelper do
           GithubServiceHelper.new('octocat', 'access-token').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::GithubError
 
-        expected_exception.message.must_match /GitHub returned an error/
-        expected_exception.message.must_match /Semantically Invalid/
+        expected_exception.message.must_match(/GitHub returned an error/)
+        expected_exception.message.must_match(/Semantically Invalid/)
       end
     end
 
@@ -110,8 +110,8 @@ describe GithubServiceHelper do
           GithubServiceHelper.new('octocat', 'access-token').create_github_repo("Hello-World")
         }.must_raise GithubServiceHelper::GithubError
 
-        expected_exception.message.must_match /GitHub returned an error/
-        expected_exception.message.must_match /Validation Failed/
+        expected_exception.message.must_match(/GitHub returned an error/)
+        expected_exception.message.must_match(/Validation Failed/)
       end
     end
 
@@ -184,8 +184,8 @@ describe GithubServiceHelper do
             GithubServiceHelper.new('octocat', 'access-token').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
           }.must_raise GithubServiceHelper::GithubError
 
-          expected_exception.message.must_match /GitHub returned an error/
-          expected_exception.message.must_match /some error message/
+          expected_exception.message.must_match(/GitHub returned an error/)
+          expected_exception.message.must_match(/some error message/)
         end
       end
 
@@ -285,8 +285,8 @@ describe GithubServiceHelper do
             GithubServiceHelper.new('octocat', 'access-token').create_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
           }.must_raise GithubServiceHelper::GithubError
 
-          expected_exception.message.must_match /GitHub returned an error/
-          expected_exception.message.must_match /key is invalid. Ensure you've copied the file correctly/
+          expected_exception.message.must_match(/GitHub returned an error/)
+          expected_exception.message.must_match(/key is invalid. Ensure you've copied the file correctly/)
         end
       end
 
@@ -403,8 +403,8 @@ describe GithubServiceHelper do
                 remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
           }.must_raise GithubServiceHelper::GithubError
 
-          expected_exception.message.must_match /GitHub returned an error/
-          expected_exception.message.must_match /some error message/
+          expected_exception.message.must_match(/GitHub returned an error/)
+          expected_exception.message.must_match(/some error message/)
         end
       end
     end
@@ -515,8 +515,8 @@ describe GithubServiceHelper do
                     remove_github_deploy_key(repo_name: @repo_name, deploy_key_title: @key_title)
               }.must_raise GithubServiceHelper::GithubError
 
-              expected_exception.message.must_match /GitHub returned an error/
-              expected_exception.message.must_match /some error message/
+              expected_exception.message.must_match(/GitHub returned an error/)
+              expected_exception.message.must_match(/some error message/)
             end
           end
 
@@ -596,8 +596,8 @@ describe GithubServiceHelper do
           GithubServiceHelper.new('octocat', 'access-token').delete_github_repo(@repo_name)
         }.must_raise GithubServiceHelper::GithubError
 
-        expected_exception.message.must_match /GitHub returned an error/
-        expected_exception.message.must_match /some error message/
+        expected_exception.message.must_match(/GitHub returned an error/)
+        expected_exception.message.must_match(/some error message/)
       end
     end
 
