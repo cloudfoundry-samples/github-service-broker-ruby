@@ -3,3 +3,5 @@
 .idea
 /service_broker/manifest.yml
 /example_app/manifest.yml
+.envrc
+.rake_t_cache
