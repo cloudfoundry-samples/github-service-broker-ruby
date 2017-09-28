@@ -77,6 +77,7 @@ class ServiceConsumerApp < Sinatra::Base
   end
 
   def credentials_of_all_repos
-    CF::App::Credentials.find_all_by_service_label(service_name)
+    @credentials ||= CF::App::Credentials.new({'VCAP_SERVICES' => vcap_services})
+    @credentials.find_all_by_service_label(service_name)
   end
 end

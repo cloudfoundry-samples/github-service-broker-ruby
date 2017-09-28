@@ -5,7 +5,7 @@ describe "/" do
   before do
     ensure_env_vars_exist
 
-    @vcap_services_value = <<JSON
+    @vcap_services_value = <<~JSON
       {
         "github-repo": [
           {
@@ -16,14 +16,21 @@ describe "/" do
               "name": "#{repo_name}",
               "uri": "#{repo_uri}",
               "ssh_url": "#{repo_ssh_url}",
-              "private_key": "#{repo_private_key}"
+              "private_key": #{repo_private_key.to_json}
             }
           }
         ]
       }
-JSON
+    JSON
+
+    @vcap_application_value = <<~JSON
+      {
+        "application_name": "#{File.basename(__FILE__, '.rb')}"
+      }
+    JSON
 
     ServiceConsumerApp.any_instance.stubs(:vcap_services).returns(@vcap_services_value)
+    ServiceConsumerApp.any_instance.stubs(:vcap_application).returns(@vcap_application_value)
 
     visit "/"
   end
@@ -69,6 +76,7 @@ def repo_name
 end
 
 def repo_private_key
+  # the corresponding public key must be present as a deploy key in "#{github_username}/#{repo_name}"
   ENV["GITHUB_REPO_PRIVATE_KEY"]
 end
 
