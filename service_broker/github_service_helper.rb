@@ -28,7 +28,7 @@ class GithubServiceHelper
         # error due to unknown reason, pass the original error message upstream
         raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
       end
-    rescue Faraday::Error::TimeoutError
+    rescue Faraday::Error::TimeoutError, Faraday::ConnectionFailed
       raise GithubServiceHelper::GithubUnreachableError
     end
 
@@ -40,7 +40,7 @@ class GithubServiceHelper
       octokit_client.delete_repository(full_repo_name(name))
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
-    rescue Faraday::Error::TimeoutError
+    rescue Faraday::Error::TimeoutError, Faraday::ConnectionFailed
       raise GithubServiceHelper::GithubUnreachableError
     end
   end
@@ -88,7 +88,7 @@ class GithubServiceHelper
       raise GithubServiceHelper::GithubResourceNotFoundError
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
-    rescue Faraday::Error::TimeoutError
+    rescue Faraday::Error::TimeoutError, Faraday::ConnectionFailed
       raise GithubServiceHelper::GithubUnreachableError
     end
   end
@@ -98,7 +98,7 @@ class GithubServiceHelper
       octokit_client.add_deploy_key(full_repo_name, deploy_key_title, public_key)
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
-    rescue Faraday::Error::TimeoutError
+    rescue Faraday::Error::TimeoutError, Faraday::ConnectionFailed
       raise GithubServiceHelper::GithubUnreachableError
     end
   end
@@ -108,7 +108,7 @@ class GithubServiceHelper
       octokit_client.remove_deploy_key(full_repo_name, deploy_key_id)
     rescue Octokit::Error => e
       raise GithubServiceHelper::GithubError.new("GitHub returned an error - #{e.message}")
-    rescue Faraday::Error::TimeoutError
+    rescue Faraday::Error::TimeoutError, Faraday::ConnectionFailed
       raise GithubServiceHelper::GithubUnreachableError
     end
   end
@@ -129,4 +129,3 @@ class GithubServiceHelper
     ::Octokit::Client.new(access_token: @access_token)
   end
 end
-
