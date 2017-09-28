@@ -54,10 +54,11 @@ class GithubRepoHelper
     private_key = repo_credentials["private_key"]
     repo_name = repo_credentials["name"]
     repo_ssh_url = repo_credentials["ssh_url"]
-    keys_dir = "/tmp/github_keys"
+    temp_dir = Dir.mktmpdir
+    keys_dir = "#{temp_dir}/github_keys"
     key_file_name = "#{keys_dir}/#{repo_name}.key"
-    git_ssh_script = "/tmp/#{repo_name}_ssh_script.sh"
-    known_hosts_file = "/tmp/github_known_hosts"
+    git_ssh_script = "#{temp_dir}/#{repo_name}_ssh_script.sh"
+    known_hosts_file = "#{temp_dir}/github_known_hosts"
 
     # Create directory for storing key file, and set permissions
     `if [ ! -d #{keys_dir} ]; then mkdir #{keys_dir}; fi`
@@ -87,13 +88,12 @@ BASH
     end
 
     commands = [
-        "cd /tmp; GIT_SSH=#{git_ssh_script} git clone #{repo_ssh_url} 2>&1",
-        "cd /tmp/#{repo_name} && git config user.name '#{application_name}' 2>&1",
-        "cd /tmp/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
-        "cd /tmp/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",
-        "cd /tmp/#{repo_name}; GIT_SSH=#{git_ssh_script} git push origin master 2>&1"
+        "cd #{temp_dir}; GIT_SSH=#{git_ssh_script} git clone #{repo_ssh_url} 2>&1",
+        "cd #{temp_dir}/#{repo_name} && git config user.name '#{application_name}' 2>&1",
+        "cd #{temp_dir}/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
+        "cd #{temp_dir}/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",
+        "cd #{temp_dir}/#{repo_name}; GIT_SSH=#{git_ssh_script} git push origin master 2>&1"
     ]
-
 
     return_code = 0
     output = ""
@@ -109,7 +109,7 @@ BASH
     cleanup_commands = [
         "rm #{key_file_name}",
         "rm #{git_ssh_script}",
-        "rm -rf /tmp/#{repo_name}"
+        "rm -rf #{temp_dir}/#{repo_name}"
     ]
 
     cleanup_commands.each do |command|
