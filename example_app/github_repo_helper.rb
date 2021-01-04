@@ -36,10 +36,10 @@ class GithubRepoHelper
   # - configure git ssh (known hosts, and private key file)
   # - clone the repo
   # - set git author
-  # - check out master
+  # - check out main branch
   # - create empty commit
   # - print the commit log
-  # - push commit to master
+  # - push commit to main branch
   # - delete private key
   # - delete ssh script
   # - delete cloned directory
@@ -93,7 +93,7 @@ BASH
         "cd #{temp_dir}/#{repo_name} && git config user.email '#{application_name}@example.com' 2>&1",
         "cd #{temp_dir}/#{repo_name} && git commit --allow-empty -m 'auto generated empty commit' 2>&1",
         "cd #{temp_dir}/#{repo_name} && git log --pretty=format:\"%h%x09%ad%x09%s\" 2>&1",
-        "cd #{temp_dir}/#{repo_name}; GIT_SSH=#{git_ssh_script} git push origin master 2>&1"
+        "cd #{temp_dir}/#{repo_name}; GIT_SSH=#{git_ssh_script} git push origin main 2>&1"
     ]
 
     return_code = 0
