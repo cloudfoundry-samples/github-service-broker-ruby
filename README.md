@@ -98,7 +98,7 @@ With `cf`:
 $ cd github-service-broker-ruby/example_app/
 $ cf push github-consumer
 $ cf create-service github-repo public github-repo-1
-$ cf bind-service github-repo-1 github-consumer
+$ cf bind-service github-consumer github-repo-1
 $ cf services # can be used to verify the binding was created
 $ cf restart github-consumer
 ```
