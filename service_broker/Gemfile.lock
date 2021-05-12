@@ -28,7 +28,7 @@ GEM
       rack
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
-    rake (12.1.0)
+    rake (12.3.3)
     safe_yaml (1.0.4)
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
